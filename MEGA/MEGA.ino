@@ -117,7 +117,7 @@ int ecritureClavier = 0;
 File myFile;
 
 #define nb_arg_file 8
-int * arg_file[10] = {&vitesseContinuDebut, &vitesseContinuFin, &vitesseIpIDebut, &vitesseIpIFin, &nbPasMoteurA, &PenteAcceleration, &nbPulseDesc, &tempsPose}  
+int * arg_file[10] = {&vitesseContinuDebut, &vitesseContinuFin, &vitesseIpIDebut, &vitesseIpIFin, &nbPasMoteurA, &PenteAcceleration, &nbPulseDesc, &tempsPose};
 
   
 
@@ -188,29 +188,33 @@ void loop()
 
 int get_config(){
     myFile = SD.open("config.txt", FILE_READ);
-    for(int i = -1, i <=  nb_arg_file, i++){
-        char c = SD.read();
+    for(int i = -1; i <=  nb_arg_file; i++){
+        char c = myFile.read();
         tmpA = 0;
         while(c != ";"){
             tmpA = tmpA * 10 + c - 49;
         }
         if(i == -1){
-            posAbsoluePointer = tmpA;
+            posAbsolue = tmpA;
         } else {
             *arg_file[i] = tmpA;
         }
     }
-    SD.close();
+    myFile.close();
+    return 0;
 }
 
 int save_config(){
+  SD.remove("config.txt");
   myFile = SD.open("TEST.TXT", FILE_WRITE);
-  SD.write(posAbsolue);
-  SD.write(";");
-  for(in i = 0; i <= nb_arg_file, i++){
-      SD.write(*arg_file[i]);
-      SD.write(";");
+  myFile.print(posAbsolue);
+  myFile.print(";");
+  for(int i = 0; i <= nb_arg_file; i++){
+      myFile.print(*arg_file[i]);
+      myFile.print(";");
   }
+  myFile.close();
+  return 0;
 
 }
 
