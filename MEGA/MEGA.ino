@@ -24,7 +24,6 @@ int subMenu = 0;
 int posMenu;
 #define tailleMenu 8
 char titreMenu[8][256] = {"Plage vitesse Continu", "plage image par image", "Nb pas moteur A", "Nb pas moteur B", "Pente acceleration", "nb pulse apres desc", "temps de pose", "retour <--"};
-
 int changement;
 
 //-------------------variables globales
@@ -95,10 +94,9 @@ int nbPulseDesc = 1;
 int tempsPose = 1;
 
 //
-long posAbsolue = 89;
+long posAbsolue = 0;
 unsigned long targetAbsolue = 10;
-  
-long posRelatif = -42;
+long posRelatif = 0;
 long targetRelatif = 123;
 
 
@@ -111,11 +109,16 @@ char tmpAff;
 char codeK;
 char tamponK = -1;
 
+int ecritureClavier = 0;
 
 #include <SPI.h>
 #include <SD.h>
 
 File myFile;
+
+#define nb_arg_file 8
+int * arg_file[10] = {&vitesseContinuDebut, &vitesseContinuFin, &vitesseIpIDebut, &vitesseIpIFin, &nbPasMoteurA, &PenteAcceleration, &nbPulseDesc, &tempsPose}  
+
   
 
 
@@ -151,16 +154,11 @@ void setup()
 
     // READ DATA FROM FILE
 
-     pinMode(53, OUTPUT);
-   /*  if (!SD.begin(53)) {
+    pinMode(53, OUTPUT);
+    if (!SD.begin(53)) {
         Serial.println("initialization failed!"); 
-    } else {
-       myFile = SD.open("TEST.TXT", FILE_READ);
-          Serial.println("Read From FILE");
-          Serial.println("End From FILE");
-       myFile.close();
-    }*/
-
+    } 
+    get_config();
 }
 
 
@@ -186,6 +184,34 @@ void loop()
 
 
  
+}
+
+int get_config(){
+    myFile = SD.open("config.txt", FILE_READ);
+    for(int i = -1, i <=  nb_arg_file, i++){
+        char c = SD.read();
+        tmpA = 0;
+        while(c != ";"){
+            tmpA = tmpA * 10 + c - 49;
+        }
+        if(i == -1){
+            posAbsoluePointer = tmpA;
+        } else {
+            *arg_file[i] = tmpA;
+        }
+    }
+    SD.close();
+}
+
+int save_config(){
+  myFile = SD.open("TEST.TXT", FILE_WRITE);
+  SD.write(posAbsolue);
+  SD.write(";");
+  for(in i = 0; i <= nb_arg_file, i++){
+      SD.write(*arg_file[i]);
+      SD.write(";");
+  }
+
 }
 
 int ledOn(int nb_led){
@@ -592,6 +618,7 @@ int doubleMenu(int * a, int * b, String s1, String s2){
         lcd1.clear();
         lcd1.setCursor(0,0);
         lcd1.print("Configuration faite");
+        save_config();
         delay(1000);
         subMenu = 0;
         menu = 0;   
@@ -629,6 +656,7 @@ int simpleMenu(int *a, String s){
     *a = tmpA;
     lcd1.clear();
     lcd1.print("Configuration fini");
+    save_config();
     subMenu = 0;
     menu = 0;
     return 1;
@@ -743,6 +771,7 @@ void handling(){
  
    if( tamponK == -1 && codeK == '#'){
       int entreeClavier;
+      ecritureClavier = 1;
       if(testAbsolue()){
         Serial.println("absolu");
         lcd1.setCursor(0,1);
@@ -758,8 +787,12 @@ void handling(){
       }
         Serial.println(tmpA);
         refresh = 1;
-        
+      ecritureClavier = 0;
      
+   } 
+
+   if(tamponK == -1 && codeK == "*" && ecritureClavier == 0){
+    save_config();
    }
 
   affichage_classique();
