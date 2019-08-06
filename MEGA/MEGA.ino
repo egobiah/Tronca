@@ -74,7 +74,7 @@ int p2 = A9;
 // Jack
 int vert = 11;
 int rouge =12;
-int led[12] = {i1T,i1B, i2T, i2B, i3T, i3B, i4T, i4B,i5T, i5B, vert, rouge};
+int led[12] = {i1T,i1B, i2T, i2B, i3T, i3B, i4T, i4B,i5T, i5B};
 int input[12] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur};
 // 
 int etat = 0;
@@ -129,7 +129,10 @@ int ecritureClavier = 0;
 int * arg_file[10] = {&vitesseContinuDebut, &vitesseContinuFin, &vitesseIpIDebut, &vitesseIpIFin, &nbPasMoteurA, &PenteAcceleration, &nbPulseDesc, &tempsPose};
 
   
-
+void interuptStop(){
+  Serial.println("Stop pressed interupt");
+  posAbsolue = 1;
+}
 
 void setup() 
 {
@@ -141,17 +144,12 @@ void setup()
         delay(100);
         ledOff(led[i]); 
     }
-    // Initialisations des interrupteurs
-    pinMode (i1, INPUT);
-    pinMode (i2, INPUT);
-    pinMode (i3, INPUT);
-    pinMode (i4, INPUT);
-    pinMode (i5, INPUT);
-    // Initialisation des potentiomètres
-    pinMode (p1, INPUT);    
-    pinMode (p2, INPUT);
-    // Initialisation de l'encodeur
-    pinMode (encodeur, INPUT);
+  // Initialisation des inputs
+        for(int i = 0; i < sizeof(input)/sizeof(input[0]) ; i++){
+        pinMode(input[i], INPUT); 
+    }
+
+    
     digitalWrite(encodeur,true);
     // Initialisation lcd1 et lcd2
     lcd1.init();       
@@ -176,6 +174,10 @@ void setup()
  
     get_config();
     intToLed(12);
+
+     // pinMode(b5,INPUT);
+     attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
+
 }
 
 
