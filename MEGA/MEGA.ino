@@ -274,6 +274,7 @@ int save_config(){
       myFile.print(";");
   }
   myFile.close();
+  Serial.println("Config sauvegatdee");
 
   SD.end();
     SPI.end();
@@ -809,9 +810,11 @@ void handling(){
    
    if(testBoutonPressed(5)){
       Serial.print("1 image arrière :)");
+      posAbsolue--;
    } 
    if(testBoutonPressed(6)){
       Serial.println("1 image avant");
+      posAbsolue++;
    }
    if(testBoutonPressed(7)){
       Serial.println("Avance Rapide");
@@ -864,7 +867,8 @@ void handling(){
      
    } 
 
-   if(tamponK == -1 && codeK == "*" && ecritureClavier == 0){
+   if(tamponK == -1 && codeK == '*' && ecritureClavier == 0){
+    Serial.println("Bouton Save");
     save_config();
    }
 
