@@ -13,6 +13,17 @@ LiquidCrystal_I2C lcd2(0x22, 16, 2);
 #include <RotaryEncoder.h>
 RotaryEncoder encoder(46, 47);
 
+#include "LedControl.h"
+int cs_led = 48;
+
+LedControl lc=LedControl(44,52,48,2);
+
+#include <SPI.h>
+#include <SD.h>
+int cs_SD = 53;
+
+File myFile;
+
 int adresse = 0;
 int adresseCible = 0;
 
@@ -94,6 +105,7 @@ int nbPulseDesc = 1;
 int tempsPose = 1;
 
 //
+long posAbsolueOld = 0;
 long posAbsolue = 0;
 unsigned long targetAbsolue = 10;
 long posRelatif = 0;
@@ -111,10 +123,7 @@ char tamponK = -1;
 
 int ecritureClavier = 0;
 
-#include <SPI.h>
-#include <SD.h>
 
-File myFile;
 
 #define nb_arg_file 8
 int * arg_file[10] = {&vitesseContinuDebut, &vitesseContinuFin, &vitesseIpIDebut, &vitesseIpIFin, &nbPasMoteurA, &PenteAcceleration, &nbPulseDesc, &tempsPose};
@@ -154,11 +163,19 @@ void setup()
 
     // READ DATA FROM FILE
 
-    pinMode(53, OUTPUT);
-    if (!SD.begin(53)) {
-        Serial.println("initialization failed!"); 
-    } 
+  digitalWrite(cs_SD,LOW);
+   
+   
+
+      lc.shutdown(0,false);
+  /* Set the brightness to a medium values */
+  lc.setIntensity(0,8);
+  /* and clear the display */
+  lc.clearDisplay(0); 
+  
+ 
     get_config();
+    intToLed(12);
 }
 
 
@@ -186,34 +203,81 @@ void loop()
  
 }
 
+void intToLed(long num){
+ 
+  lc.clearDisplay(0);
+  int i = 0;
+  int tmpLed = 0;
+  if(num == 0){
+    lc.setDigit(0,0,0,0);
+  }
+  while(num > 0){
+    tmpLed = num%10;
+    lc.setDigit(0,i,tmpLed,0);
+    num = num/10;
+    i++;
+  }
+}
+
 int get_config(){
-    myFile = SD.open("config.txt", FILE_READ);
-    for(int i = -1; i <=  nb_arg_file; i++){
-        char c = myFile.read();
-        tmpA = 0;
-        while(c != ";"){
-            tmpA = tmpA * 10 + c - 49;
-        }
-        if(i == -1){
-            posAbsolue = tmpA;
-        } else {
-            *arg_file[i] = tmpA;
-        }
+
+
+    if (!SD.begin(53)) {
+        Serial.println("initialization failed!"); 
+        return 1;
     }
-    myFile.close();
-    return 0;
+    
+    
+    myFile = SD.open("config.txt", FILE_READ);
+      if(myFile != 0){
+        for(int i = -1; i <  nb_arg_file; i++){
+          Serial.println("Getting files");
+            char c = myFile.read();
+            tmpA = 0;
+            while(c != ';'){
+             // Serial.println(c);
+                tmpA = tmpA * 10 + c - 48;
+                c = myFile.read();
+            }
+            //Serial.println(tmpA);
+            if(i == -1){
+                posAbsolue = tmpA;
+            } else {
+                *arg_file[i] = tmpA;
+            }
+        }
+        Serial.println("test pointeur debut");
+        Serial.println(*arg_file[0]);
+        Serial.println(vitesseContinuDebut);
+        myFile.close();
+
+      SD.end();
+    SPI.end();
+
+        return 0;
+      }
 }
 
 int save_config(){
+    if (!SD.begin(53)) {
+        Serial.println("initialization failed!"); 
+        return 1;
+    }
+  digitalWrite(cs_SD, LOW);
+  digitalWrite(cs_led,HIGH);
   SD.remove("config.txt");
-  myFile = SD.open("TEST.TXT", FILE_WRITE);
+  myFile = SD.open("config.txt", FILE_WRITE);
   myFile.print(posAbsolue);
   myFile.print(";");
-  for(int i = 0; i <= nb_arg_file; i++){
+  for(int i = 0; i < nb_arg_file; i++){
       myFile.print(*arg_file[i]);
       myFile.print(";");
   }
   myFile.close();
+
+  SD.end();
+    SPI.end();
+
   return 0;
 
 }
@@ -720,6 +784,11 @@ void affichage_relatif(){
 }
 
 void handling(){
+
+   if(posAbsolueOld != posAbsolue){
+    posAbsolueOld = posAbsolue;
+    intToLed(posAbsolueOld);
+   }
 
    tmpA = map(analogRead(p1), 26, 1024, vitesseContinuDebut, vitesseContinuFin);
    if(tmpA != vitesseContinu){
