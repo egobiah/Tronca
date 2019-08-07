@@ -1,5 +1,6 @@
 #ifndef EntreeSortie_h
-#define EntreeSortire_h 
+#define EntreeSortie_h 
+
 
 class EntreeSortie{
   private:
@@ -16,6 +17,7 @@ class EntreeSortie{
     int etat;    
     int changement;
     // Fonction de declaration  
+   
     EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int tailleTabLed);
 
     //Remet a jour l'etat et le changement
@@ -41,6 +43,12 @@ class EntreeSortie{
 
     int testEncodeur();
     int testOk();
+    int testAvant();
+    int testContinu();
+
+    int ledOn(int nb_led);
+
+  int ledOff(int nb_led);
 };
 
 

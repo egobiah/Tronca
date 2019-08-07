@@ -1,5 +1,7 @@
 #ifndef Keypad_h
-#define keypad_h
+#define Keypad_h
+
+#include <Arduino.h>
 
 class Keypad {
   private :

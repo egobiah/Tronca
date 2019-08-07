@@ -48,6 +48,10 @@ class Global {
    char codeK;
    char taponK = -1;
 
+   int refreshAbsolue = 0;
+   int refreshRelatif = 0;
+   int refreshVitesse = 0;
+
    int cs_sd;
 // Fonction d'initialisation
 // Pin de la carte SD

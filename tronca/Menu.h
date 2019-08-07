@@ -14,7 +14,7 @@ class Menu{
 
   Menu(Global * g1, EntreeSortie * es1, Keypad * kp1);
   int tailleMenu = 8;
-  char titreMenu[8][256] = {"Plage vitesse Continu", "plage image par image", "Nb pas moteur A", "Nb pas moteur B", "Pente acceleration", "nb pulse apres desc", "temps de pose", "retour <--"};
+  char titreMenu[8][40] = {"Plage vitesse Continu", "plage image par image", "Nb pas moteur A", "Nb pas moteur B", "Pente acceleration", "nb pulse apres desc", "temps de pose", "retour <--"};
   Global * g;
   EntreeSortie * es;
   Keypad * k;

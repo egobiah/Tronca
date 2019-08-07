@@ -1,10 +1,14 @@
 #include "EntreeSortie.h"
 #include <stdlib.h>
 #include <arduino.h>
+
+
 EntreeSortie::EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int tailleTabLed){
    // A voir si je peux pas tout simplement remplacer par un sizeof mais vu que c'est passé en paramètre....    input = malloc(tailleTabInput * sizeof(int));
-    free(led);
+ 
+    //free(led);
     led = (int *) malloc(tailleTabLed * sizeof(int));
+    input = (int *) malloc(tailleTabInput * sizeof(int));
     for(int i = 0; i < tailleTabInput; i++){
       input[i] = tabInput[i];
     }
@@ -15,7 +19,18 @@ EntreeSortie::EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int
     tailleLed = tailleTabLed;
     etat = 0;
     etatOld = 0;
-    changement = 0;      
+    changement = 0;     
+
+      for(int i = 0; i < tailleLed ; i++){
+        pinMode(led[i], OUTPUT);
+         
+    }
+
+      for(int i = 0; i < tailleInput; i++){
+        pinMode(input[i], INPUT); 
+    }
+    // Initialisation de l'encodeur
+    digitalWrite(45,true);
 }
 
 void EntreeSortie::tick(){
@@ -87,3 +102,23 @@ int EntreeSortie::testEncodeur(){
 int EntreeSortie::testOk(){
    return  testBoutonPressed(10);
 }
+
+int EntreeSortie::ledOn(int nb_led){
+  digitalWrite (nb_led, HIGH);
+}
+
+int EntreeSortie::ledOff(int nb_led){
+  digitalWrite (nb_led, LOW);
+}
+
+  int EntreeSortie::testAvant(){
+    return testInter(3);
+    
+  }
+    int EntreeSortie::testContinu(){
+        return testInter(0);
+
+      
+    }
+
+    

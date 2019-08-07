@@ -5,6 +5,7 @@ Menu::Menu(Global * g1, EntreeSortie * es1, Keypad * kp1){
   g = g1;
   es = es1;
   k = kp1;
+
 }
 
 int Menu::affichage_menu(){

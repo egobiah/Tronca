@@ -1,5 +1,5 @@
 #include <SPI.h>
-#include <SD.H>
+#include <SD.h>
 #include "VariableGlobal.h" 
 
 

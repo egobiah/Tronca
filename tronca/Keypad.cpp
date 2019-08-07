@@ -4,6 +4,7 @@
 
 Keypad::Keypad(int adresse){
   I2C_KEYPAD = adresse;
+  Wire.begin();
 }
 
 int Keypad::get_code(){
@@ -11,17 +12,20 @@ int Keypad::get_code(){
     int resR;
     int col = 32+128+8;
     int row = 64+2+4+16;
-    int p;
     int res;
     
-    Wire.beginTransmission(I2C_KEYPAD);
+    
+    Wire.beginTransmission(0x20);
     Wire.write(col);
     Wire.endTransmission();
-    Wire.requestFrom(I2C_KEYPAD, 1);
+    Wire.requestFrom(0x20, 1);
+    
     if(Wire.available()) {
         int tmp = Wire.read();
-        if(p != col){  // Serial.println(p);
-            resC = p;
+        
+        if(tmp != col){  // Serial.println(p);
+            resC = tmp;
+           
         }
     }
 
@@ -30,10 +34,9 @@ int Keypad::get_code(){
     Wire.endTransmission();
     Wire.requestFrom(I2C_KEYPAD, 1);
     if(Wire.available()) {
-        int p = Wire.read();
-        if(p != row){
-              //Serial.println(p);
-            resR = p;
+        int tmp = Wire.read();
+        if(tmp != row){
+            resR = tmp;
         }
     }
  
@@ -47,7 +50,6 @@ int Keypad::get_code(){
 
 char Keypad::decode(int code){
     char key;
-    //Serial.println(code);
     switch(code){
         case 13622:key = '1'; break;
         case 13684: key = '4'; break;
@@ -65,7 +67,7 @@ char Keypad::decode(int code){
         if(code == 16070){
             key='#';
         } else {
-            key = -1;    
+            key = '@';    
         }
     break;
   }
