@@ -38,6 +38,9 @@ class EntreeSortie{
 
     // Renvoie 1 si l'interrupteur a changé d'état
     int touchInter(int inter);  
+
+    int testEncodeur();
+    int testOk();
 };
 
 

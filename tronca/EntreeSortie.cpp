@@ -79,3 +79,11 @@ int EntreeSortie::testInter(int inter){
 int EntreeSortie::touchInter(int inter){ 
    return testBoutonPressed(inter) | testBoutonReleased(inter);
 }
+
+int EntreeSortie::testEncodeur(){
+   return testBoutonReleased(11);
+}
+
+int EntreeSortie::testOk(){
+   return  testBoutonPressed(10);
+}
