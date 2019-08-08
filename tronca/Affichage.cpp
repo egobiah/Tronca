@@ -48,7 +48,7 @@ void Affichage::affichage_relatif(){
   
     
   
-  Serial.println("affichage R");
+  
   g->lcd2.clear();
   g->lcd2.setCursor(0,0);
   g->lcd2.print("R");

@@ -55,6 +55,19 @@ int led[12] = {i1T,i1B, i2T, i2B, i3T, i3B, i4T, i4B,i5T, i5B};
 int input[12] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur};
 //
 
+  int moteur =0;
+  int dirMoteur = 0;
+
+  int swa_1 = 0;
+  int swa_2 = 0;
+  int swa_3 = 0;
+  int swa_4 = 0;
+
+  int swb_1 = 0;
+  int swb_2= 0;
+  int swb_3 = 0;
+  int swb_4 = 0;
+
 int tmpA;
 int tmpB;
 #include "Keypad.h"
@@ -72,8 +85,12 @@ Menu m(&g, &es, &k);
 #include "Affichage.h"
 Affichage aff(&g, &es, &lc);
 
+#include "Moteur.h"
+Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_1, swa_2, swa_3, swa_4, swb_1, swb_2, swb_3, swb_4); 
+
 void interuptStop(){
   Serial.println("Stop pressed interupt");
+  g.stop = 1;
 
 }
 
@@ -119,31 +136,63 @@ handling();
 
 
 aff.affichageConditionnel();
+
+if(g.stop != 0){
+  g.stop = 0;
+  delay(2000);
+}
 }
 
 
 void handling(){
-
+  //image Arriere
   if(es.testBoutonPressed(5)){
-      Serial.print("1 image arrière :)");
-      g.posAbsolue--;
+      if(!es.testPulse()){
+        monMoteur.imageArriere();
+      } else {
+        monMoteur.pulseArriere();  
+      }
    } 
+   // image avant
    if(es.testBoutonPressed(6)){
-      Serial.println("1 image avant");
-      g.posAbsolue++;
+      if(!es.testPulse()){
+        monMoteur.imageAvant();
+      } else {
+        monMoteur.pulseAvant();  
+      }
    }
+   // Arriere rapide
    if(es.testBoutonPressed(7)){
-      Serial.println("Avance Rapide");
-   } 
-   if(es.testBoutonPressed(8)){
-      Serial.println("Arrière rapide");
-   }
-   if(es.testBoutonPressed(9)){
-      Serial.println("Stop");
-   }
+     while(es.testInter(7)){
+      es.tick();
+        if(!es.testPulse()){
+          monMoteur.imageArriere();
+        } else {
+          monMoteur.pulseArriere();  
+      }    
+    }
 
+   }
+   // Arriere Rapide 
+   if(es.testBoutonPressed(8)){
+       while(es.testInter(8)){
+        es.tick();
+        if(!es.testPulse()){
+          monMoteur.imageAvant();
+        } else {
+          monMoteur.pulseAvant();  
+        }
+      }
+   }
+    // Bouton Go
     if(es.testBoutonPressed(10) && g.ecritureClavier == 0){
       Serial.println("Go");
+      if(es.testAbsolue()){
+        monMoteur.goToAbsolue();
+      } else {
+        monMoteur.goToRelatif();
+      }
+      
    }
 
    if(es.touchContinu()){

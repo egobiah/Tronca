@@ -2,26 +2,28 @@
 //Permet de contrôler le driver d'un moteur pas à pas en manipulant les switchs par le biais de 4 optatocoupleurs PC815.
 
 #include <FlexyStepper.h>
-
+#define plafond 60
 const int moteurA = 9;
 const int moteurA_direction = 4;
 
 
 
 int opto = A0;
-/*
+
 int sw5_A = 10;
 int sw6_A = 11;
 int sw7_A = 12;
 int sw8_A = 13;
 FlexyStepper stepper1;
 FlexyStepper stepper2; 
+int tmpH = 0;
+int tmpL = 0;
+int val;
 
-*/
 
 void setup() {
   // put your setup code here, to run once:
-/*
+
   pinMode (sw5_A, OUTPUT);
   pinMode (sw6_A, OUTPUT);
   pinMode (sw7_A, OUTPUT);
@@ -39,22 +41,36 @@ void setup() {
 
     vingt_cinq_mille_six_cent; //------------------------------------------------------------Super----
     stepper1.setAccelerationInStepsPerSecondPerSecond(800);   //acceleration
-    stepper1.setSpeedInStepsPerSecond(6400);  
-*/
+    stepper1.setSpeedInStepsPerSecond(12800);  
+
 Serial.begin(9600);
 pinMode (opto, INPUT);
+ 
 
 }
 
 void loop() 
 {
   
-    
+    stepper1.moveRelativeInSteps(1);
+    val = analogRead(opto);
+    if(val <= plafond && tmpH == 0){
+      tmpH = 2;
+      Serial.println("C'est dans la boite");
+      delay(4000);
+    }
+    if(val > plafond &&  tmpH == 2){
+      tmpH = 1;
+    }
+
+    if(val > plafond +200 && tmpH == 1){
+      tmpH = 0;
+    }
   Serial.println(analogRead(opto));
 
   
 }
-/*
+
 void quatre_cent () //off on on on
 {
   digitalWrite (sw5_A, LOW);
@@ -249,7 +265,7 @@ void  deplacement_rapide_B() //-------------------
 
 void  deplacement_rapide_C() //-------------------OK
 {
-  /*   quatre_cent();
+    quatre_cent();
     stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
     stepper1.setSpeedInStepsPerSecond(800);      
     stepper1.moveRelativeInSteps(50*100);
@@ -261,11 +277,9 @@ void  deplacement_rapide_C() //-------------------OK
     stepper1.moveRelativeInSteps(50000);
   delay (5000);
 
-  /*  mille_six_cent(); //-------------------------------------------------------Super aussi!----
+    mille_six_cent(); //-------------------------------------------------------Super aussi!----
     stepper1.setAccelerationInStepsPerSecondPerSecond(6400);   //acceleration
     stepper1.setSpeedInStepsPerSecond(6400);      
     stepper1.moveRelativeInSteps(200*100);
   delay (1000); 
 }
-
-*/

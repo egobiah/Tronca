@@ -37,6 +37,7 @@ class Global {
 
    int nbPulseDesc;
 
+  int stop = 0;
 #define nb_arg_file 8
   int * arg_file[10] = {&vitesseContinuDebut, &vitesseContinuFin, &vitesseIpIDebut, &vitesseIpIFin, &nbPasMoteurA, &PenteAcceleration, &nbPulseDesc, &tempsPose};
 

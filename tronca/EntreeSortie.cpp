@@ -56,11 +56,13 @@ void EntreeSortie::refresh(void){
 void EntreeSortie::detect_input(){
     changement = 0;
     if(etat != etatOld){
+      
        changement = etatOld ^ etat;
        if(etat & changement){
           changement = -changement;
        }
        etatOld = etat; 
+       Serial.println(changement);
     }  
  }
   
