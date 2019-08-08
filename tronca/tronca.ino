@@ -54,6 +54,9 @@ int rouge =12;
 int led[12] = {i1T,i1B, i2T, i2B, i3T, i3B, i4T, i4B,i5T, i5B};
 int input[12] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur};
 //
+
+int tmpA;
+int tmpB;
 #include "Keypad.h"
 Keypad k(0x20);
 
@@ -61,7 +64,7 @@ Keypad k(0x20);
 Global g(cs_SD);
 
 #include "EntreeSortie.h"
-EntreeSortie es(input,12,led,12); ;
+EntreeSortie es(input,12,led,12,&g); ;
 
 #include "Menu.h"
 Menu m(&g, &es, &k);
@@ -91,14 +94,17 @@ void setup()
 
 void loop() 
 {
-
 es.tick();
 
 
+if(g.posAbsolueOld != g.posAbsolue){
+    g.posAbsolueOld = g.posAbsolue;
+    aff.affichage_absolue();
+}
 
 
 
 
 
-
+aff.affichageConditionnel();
 }

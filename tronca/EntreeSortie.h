@@ -1,5 +1,9 @@
 #ifndef EntreeSortie_h
 #define EntreeSortie_h 
+#include "VariableGlobal.h"
+#include <Arduino.h>
+#include <stdlib.h>
+
 
 
 class EntreeSortie{
@@ -11,14 +15,17 @@ class EntreeSortie{
     int *led;
     int tailleLed;
     int etatOld;
+    int p1 = A8;
+    int p2 = A9;
     
 
   public:
+    Global * g;
     int etat;    
     int changement;
     // Fonction de declaration  
    
-    EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int tailleTabLed);
+    EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int tailleTabLed, Global * g1);
 
     //Remet a jour l'etat et le changement
     void tick(void);
@@ -45,6 +52,7 @@ class EntreeSortie{
     int testOk();
     int testAvant();
     int testContinu();
+    void mapPottar(int potar, int debut, int fin, int * valeur);
 
     int ledOn(int nb_led);
 

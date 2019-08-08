@@ -1,12 +1,12 @@
 #include "EntreeSortie.h"
-#include <stdlib.h>
-#include <arduino.h>
 
 
-EntreeSortie::EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int tailleTabLed){
+
+EntreeSortie::EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int tailleTabLed, Global * g1){
    // A voir si je peux pas tout simplement remplacer par un sizeof mais vu que c'est passé en paramètre....    input = malloc(tailleTabInput * sizeof(int));
  
     //free(led);
+    g = g1;
     led = (int *) malloc(tailleTabLed * sizeof(int));
     input = (int *) malloc(tailleTabInput * sizeof(int));
     for(int i = 0; i < tailleTabInput; i++){
@@ -36,6 +36,7 @@ EntreeSortie::EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int
 void EntreeSortie::tick(){
   refresh();
   detect_input();
+  mapPottar(p1,g->vitesseContinuDebut, g->vitesseContinuFin, &(g->vitesseContinu));
 }
 
 //Remet a jour l'etat
@@ -121,4 +122,12 @@ int EntreeSortie::ledOff(int nb_led){
       
     }
 
-    
+void EntreeSortie::mapPottar(int potar, int debut, int fin, int * valeur){
+    int tmpA;
+    tmpA = map(analogRead(potar), 26, 1024, debut, fin);
+   if(tmpA != *valeur){
+    Serial.println(*valeur);
+    g->refreshVitesse = 1;
+    *valeur = tmpA;
+   }
+}

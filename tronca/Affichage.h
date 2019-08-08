@@ -18,6 +18,7 @@ class Affichage{
   void intToLed(long num);
   void affichage_tout();
   void affichageConditionnel();
+  
 };
 
 
