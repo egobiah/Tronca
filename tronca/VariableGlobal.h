@@ -46,7 +46,9 @@ class Global {
    int posMenu = 0;
 
    char codeK;
-   char taponK = -1;
+   char tamponK = -1;
+
+   int ecritureClavier = 0;
 
    int refreshAbsolue = 0;
    int refreshRelatif = 0;

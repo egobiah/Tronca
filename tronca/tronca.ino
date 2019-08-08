@@ -77,17 +77,21 @@ void interuptStop(){
 
 }
 
+void interuptOpto(){
+  g.posAbsolue += es.dirrection();
+  g.posRelatif += es.dirrection();
+  aff.affichage_tout();
+}
+
 void setup() 
 {
     Serial.begin(9600); // initialise connexion série à 9600 bauds
      attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
     Serial.println("Ok, c'est parti");
-    g.get_config();
-    Serial.println(g.posAbsolue);
-     
-  g.lcd_init();
-  g.lcd1.print("Initialisation");
-  aff.affichage_tout();
+    g.get_config();   
+     g.lcd_init();
+     g.lcd1.print("Initialisation");
+   aff.affichage_tout();
 }
 
 
@@ -102,9 +106,76 @@ if(g.posAbsolueOld != g.posAbsolue){
     aff.affichage_absolue();
 }
 
+handling();
 
 
 
 
 aff.affichageConditionnel();
+}
+
+
+void handling(){
+  if(es.testBoutonPressed(5)){
+      Serial.print("1 image arrière :)");
+      g.posAbsolue--;
+   } 
+   if(es.testBoutonPressed(6)){
+      Serial.println("1 image avant");
+      g.posAbsolue++;
+   }
+   if(es.testBoutonPressed(7)){
+      Serial.println("Avance Rapide");
+   } 
+   if(es.testBoutonPressed(8)){
+      Serial.println("Arrière rapide");
+   }
+   if(es.testBoutonPressed(9)){
+      Serial.println("Stop");
+   }
+
+    if(es.testBoutonPressed(10) && g.ecritureClavier == 0){
+      Serial.println("Go");
+   }
+
+   if(es.touchContinu()){
+      g.refreshVitesse = 1;
+      aff.affichage_vitesse();
+      Serial.println("Continu touch");
+   }
+
+   if(es.touchAvant()){
+    Serial.print("Avant");
+    g.refresh = 1;
+    
+  }
+  g.codeK = g.tamponK;
+  g.tamponK = k.get_key();
+  
+  if( g.tamponK == -1 && g.codeK == '#'){
+      int entreeClavier;
+      long tmpA;
+      g.ecritureClavier = 1;
+      if(es.testAbsolue()){
+        Serial.println("absolu");
+        g.lcd1.setCursor(0,1);
+        g.lcd1.print("Attente saisie        ");
+        tmpA = m.saisieClavier(g.lcd1,1);
+        g.targetAbsolue = tmpA;
+      } else {
+        Serial.println("Relatif");
+        g.lcd2.setCursor(0,1);
+        g.lcd2.print("Attente saisie        ");
+        tmpA = m.saisieClavier(g.lcd2,1);
+        g.targetRelatif = tmpA;
+      }
+        Serial.println(tmpA);
+        g.refresh = 1;
+      g.ecritureClavier = 0;
+     
+   } 
+
+   if(g.tamponK == -1 && g.codeK == '*' && g.ecritureClavier == 0 ){
+    g.save_config();
+   }
 }

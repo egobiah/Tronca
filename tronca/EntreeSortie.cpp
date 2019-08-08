@@ -37,6 +37,7 @@ void EntreeSortie::tick(){
   refresh();
   detect_input();
   mapPottar(p1,g->vitesseContinuDebut, g->vitesseContinuFin, &(g->vitesseContinu));
+  gestionLed();
 }
 
 //Remet a jour l'etat
@@ -116,11 +117,83 @@ int EntreeSortie::ledOff(int nb_led){
     return testInter(3);
     
   }
-    int EntreeSortie::testContinu(){
-        return testInter(0);
+ int EntreeSortie::testContinu(){
+     return testInter(0);
+ }
 
-      
+ int EntreeSortie::touchContinu(){
+  return touchInter(0);
+ }
+
+ int EntreeSortie::touchAvant(){
+  return touchInter(3);
+ }
+ 
+   int EntreeSortie::testPulse(){
+    return testInter(2);
+    
+  }
+ int EntreeSortie::testCamera(){
+     return testInter(1);
+ }
+
+  int EntreeSortie::testAbsolue(){
+     return testInter(4);
+ }
+
+ void EntreeSortie::gestionLed(){
+
+  if(changement != 0){
+    for(int i = 0; i < 10; i++){
+      ledOff(led[i]);
     }
+  
+     // Led inter 1 ; led 0 et 1, 
+     if(testContinu() && !testPulse()){
+        ledOn(led[0]);
+        ledOff(led[1]);
+     } else {
+        ledOff(led[0]);
+        ledOn(led[1]);
+     }
+     
+    // Led inter 2 ; led 2 et 3
+     if(testContinu() && !testPulse() && !testContinu()){
+        ledOn(led[2]);
+        ledOff(led[3]);
+     } else {
+        ledOff(led[2]);
+        ledOn(led[3]);
+     }
+  
+       // Led inter 3 ; led 4 et 5
+     if(testPulse()){
+        ledOn(led[4]);
+        ledOff(led[5]);
+     } else {
+        ledOff(led[4]);
+        ledOn(led[5]);
+     }
+  
+       // Led inter 4 ; led 6 et 7
+     if(testAvant()){
+        ledOn(led[6]);
+        ledOff(led[7]);
+     } else {
+        ledOff(led[6]);
+        ledOn(led[7]);
+     }
+  
+          // Led inter 4 ; led 8 et 9
+     if(testAbsolue()){
+        ledOn(led[8]);
+        ledOff(led[9]);
+     } else {
+        ledOff(led[8]);
+        ledOn(led[9]);
+     }
+  }
+ }
 
 void EntreeSortie::mapPottar(int potar, int debut, int fin, int * valeur){
     int tmpA;
@@ -130,4 +203,12 @@ void EntreeSortie::mapPottar(int potar, int debut, int fin, int * valeur){
     g->refreshVitesse = 1;
     *valeur = tmpA;
    }
+}
+
+int EntreeSortie::dirrection(){
+  if(testAvant()){
+    return 1;  
+  } else {
+    return -1;
+  }
 }

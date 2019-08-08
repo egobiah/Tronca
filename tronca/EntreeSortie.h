@@ -52,11 +52,16 @@ class EntreeSortie{
     int testOk();
     int testAvant();
     int testContinu();
+    int testPulse();
+    int testCamera();
+    int testAbsolue();
+    int dirrection();
+    int touchContinu();
+    int touchAvant();
     void mapPottar(int potar, int debut, int fin, int * valeur);
-
     int ledOn(int nb_led);
-
-  int ledOff(int nb_led);
+   int ledOff(int nb_led);
+     void gestionLed();
 };
 
 
