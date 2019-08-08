@@ -57,6 +57,7 @@ void loop()
     if(val <= plafond && tmpH == 0){
       tmpH = 2;
       Serial.println("C'est dans la boite");
+      // Prendre photos ici
       delay(4000);
     }
     if(val > plafond &&  tmpH == 2){
