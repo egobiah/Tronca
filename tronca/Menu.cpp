@@ -89,6 +89,7 @@ int Menu::affichage_menu(){
           g->menu = 0;
           g->subMenu =0;
           g->posMenu = 0;
+          g->refresh=1;
           return 1;
         break;
        
@@ -150,6 +151,7 @@ int Menu::affichage_menu(){
         l.print("                   ");
         l.setCursor(1,hauteur);
         l.print(saisie);
+        Serial.println(saisie);
      // Serial.println(saisie);
     }
     if(entree == '*'){
@@ -194,7 +196,8 @@ int Menu::affichage_menu(){
         g->save_config();
         delay(1000);
         g->subMenu = 0;
-        g->menu = 0;   
+        g->menu = 0; 
+        g->refresh=1;  
         return 1;
     } else if ( tmpA == 0){
         g->lcd1.clear();
@@ -229,6 +232,7 @@ int Menu::simpleMenu(int *a, String s){
     *a = tmpA;
     g->lcd1.clear();
     g->lcd1.print("Configuration fini");
+    g->refresh=1;
     g->save_config();
     g->subMenu = 0;
     g->menu = 0;

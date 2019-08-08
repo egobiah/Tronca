@@ -67,7 +67,7 @@ char Keypad::decode(int code){
         if(code == 16070){
             key='#';
         } else {
-            key = '@';    
+            key = -1;    
         }
     break;
   }

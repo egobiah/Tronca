@@ -106,6 +106,13 @@ if(g.posAbsolueOld != g.posAbsolue){
     aff.affichage_absolue();
 }
 
+if(g.posRelatifOld != g.posRelatif){
+  g.posRelatifOld = g.posRelatif;
+  aff.affichage_relatif();
+}
+
+//Serial.println(analogRead(p2));
+
 handling();
 
 
@@ -116,6 +123,7 @@ aff.affichageConditionnel();
 
 
 void handling(){
+
   if(es.testBoutonPressed(5)){
       Serial.print("1 image arrière :)");
       g.posAbsolue--;
@@ -178,4 +186,7 @@ void handling(){
    if(g.tamponK == -1 && g.codeK == '*' && g.ecritureClavier == 0 ){
     g.save_config();
    }
+
+   m.affichage_menu();
+
 }

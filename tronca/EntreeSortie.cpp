@@ -37,6 +37,7 @@ void EntreeSortie::tick(){
   refresh();
   detect_input();
   mapPottar(p1,g->vitesseContinuDebut, g->vitesseContinuFin, &(g->vitesseContinu));
+  mapPottar(p2,g->vitesseIpIDebut, g->vitesseIpIFin, &(g->vitesseIpI));
   gestionLed();
 }
 
@@ -153,18 +154,24 @@ int EntreeSortie::ledOff(int nb_led){
         ledOn(led[0]);
         ledOff(led[1]);
      } else {
-        ledOff(led[0]);
-        ledOn(led[1]);
+        if(!testPulse()){
+          ledOff(led[0]);
+          ledOn(led[1]);
+        }
      }
      
     // Led inter 2 ; led 2 et 3
-     if(testContinu() && !testPulse() && !testContinu()){
+     if(testCamera() && !testPulse() && !testContinu()){
         ledOn(led[2]);
         ledOff(led[3]);
      } else {
-        ledOff(led[2]);
-        ledOn(led[3]);
-     }
+        if(!testPulse() && !testContinu()){
+           ledOn(led[3]);
+           ledOff(led[2]);
+        
+  
+        }
+    }
   
        // Led inter 3 ; led 4 et 5
      if(testPulse()){
@@ -198,10 +205,12 @@ int EntreeSortie::ledOff(int nb_led){
 void EntreeSortie::mapPottar(int potar, int debut, int fin, int * valeur){
     int tmpA;
     tmpA = map(analogRead(potar), 26, 1024, debut, fin);
+    //Serial.println(tmpA);
    if(tmpA != *valeur){
-    Serial.println(*valeur);
+    
     g->refreshVitesse = 1;
     *valeur = tmpA;
+    Serial.println(*valeur);
    }
 }
 

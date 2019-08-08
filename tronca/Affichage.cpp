@@ -13,12 +13,14 @@ Affichage::Affichage(Global * g1, EntreeSortie * es1, LedControl * lc1){
 }
 
 void Affichage::affichage_absolue(){
-  g->lcd1.clear();
-  g->lcd1.setCursor(0,0);
-  g->lcd1.print("@");
-  g->lcd1.print(g->posAbsolue);
-  g->lcd1.setCursor(0,1);
-  g->lcd1.print(g->targetAbsolue);
+  if(g->menu == 0){
+    g->lcd1.clear();
+    g->lcd1.setCursor(0,0);
+    g->lcd1.print("@");
+    g->lcd1.print(g->posAbsolue);
+    g->lcd1.setCursor(0,1);
+    g->lcd1.print(g->targetAbsolue);
+  }
   intToLed(g->posAbsolue);
   g->refreshAbsolue = 0;
   
@@ -26,32 +28,38 @@ void Affichage::affichage_absolue(){
 }
 
 void Affichage::affichage_vitesse(){
- 
+      int * vitesse = g->vitesse[es->testContinu()];
       g->lcd2.setCursor(9,0);
       g->lcd2.print("     ");
-      if(*g->vitesse[es->testContinu()] == 1){
+      if(*vitesse == 1){
          g->lcd2.setCursor(13,0);
          g-> lcd2.print("1ms");
     } else {
-      g->lcd2.setCursor(14-ceil(log10(*g->vitesse[es->testContinu()])),0);
-      g->lcd2.print(*g->vitesse[es->testContinu()]);
+      g->lcd2.setCursor(14-ceil(log10(*vitesse)),0);
+      g->lcd2.print(*vitesse);
       g->lcd2.print("ms");
   }
+
+  
   g->refreshVitesse = 0;
 }
 
 void Affichage::affichage_relatif(){
+  
+    
+  
   Serial.println("affichage R");
   g->lcd2.clear();
   g->lcd2.setCursor(0,0);
   g->lcd2.print("R");
   g->lcd2.print(g->posRelatif);
   
+  
 
 
   
 
-  Affichage::affichage_vitesse();
+  affichage_vitesse();
   g->lcd2.setCursor(0,1);
   g->lcd2.setCursor(0,1);
   if(!es->testAvant()){
