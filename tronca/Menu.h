@@ -4,6 +4,8 @@
 #include "src/RotaryEncoder.h"
 #include "EntreeSortie.h"
 #include "Keypad.h"
+#include <Arduino.h>
+
 
 class Menu{
   private:

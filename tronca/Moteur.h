@@ -1,6 +1,7 @@
 #ifndef moteur_h
 #define moteur_h
 
+#include <FlexyStepper.h>
 #include "VariableGlobal.h"
 #include "Affichage.h"
 #include "EntreeSortie.h"
@@ -22,6 +23,7 @@ class Moteur{
   Global * g;
   Affichage * a;
   EntreeSortie * es;
+  FlexyStepper stepper;
   
   public:
 
@@ -29,13 +31,18 @@ class Moteur{
   void pulseAvant();
   void pulseArriere();
 
-  void callage();
+  void callageAvant();
+  void callageArriere();
 
   void imageAvant();
   void imageArriere();
+
+  void avant();
+  void arriere();
   
   void goToRelatif();
   void goToAbsolue();
+  void intToSwitch(int pas, int sw);
 };
 
 

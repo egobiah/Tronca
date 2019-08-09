@@ -8,7 +8,7 @@
 
 int cs_led = 48;
 #include "src/LedControl.h"
-LedControl lc=LedControl(44,52,48,2);
+LedControl lc = LedControl(44, 52, 48, 2);
 
 
 
@@ -19,17 +19,17 @@ char c1 = -1;
 char c2 = -1;
 // Déclaration des les d'interupteurs
 
-int i1T = 32; 
+int i1T = 32;
 int i1B = 33;
 int i2T = 34;
 int i2B = 35;
 int i3T = 36;
 int i3B = 37;
-int i4T=28;
-int i4B=29;
-int i5T=30;
-int i5B=31;
- 
+int i4T = 28;
+int i4B = 29;
+int i5T = 30;
+int i5B = 31;
+
 // Déclaration des interupteurs
 int i1 = 49;
 int i2 = 40;
@@ -43,30 +43,30 @@ int b5 = 2;
 int b1 = 22;
 int b2 = 23;
 int b3 = 24;
-int b4 = 25; 
+int b4 = 25;
 int b6 = 26;
 // Potar
 int p1 = A8;
 int p2 = A9;
 // Jack
 int vert = 11;
-int rouge =12;
-int led[12] = {i1T,i1B, i2T, i2B, i3T, i3B, i4T, i4B,i5T, i5B};
+int rouge = 12;
+int led[12] = {i1T, i1B, i2T, i2B, i3T, i3B, i4T, i4B, i5T, i5B};
 int input[12] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur};
 //
 
-  int moteur =0;
-  int dirMoteur = 0;
+int moteur = 0;
+int dirMoteur = 0;
 
-  int swa_1 = 0;
-  int swa_2 = 0;
-  int swa_3 = 0;
-  int swa_4 = 0;
+int swa_1 = 0;
+int swa_2 = 0;
+int swa_3 = 0;
+int swa_4 = 0;
 
-  int swb_1 = 0;
-  int swb_2= 0;
-  int swb_3 = 0;
-  int swb_4 = 0;
+int swb_1 = 0;
+int swb_2 = 0;
+int swb_3 = 0;
+int swb_4 = 0;
 
 int tmpA;
 int tmpB;
@@ -77,7 +77,7 @@ Keypad k(0x20);
 Global g(cs_SD);
 
 #include "EntreeSortie.h"
-EntreeSortie es(input,12,led,12,&g); ;
+EntreeSortie es(input, 12, led, 12, &g); ;
 
 #include "Menu.h"
 Menu m(&g, &es, &k);
@@ -86,156 +86,181 @@ Menu m(&g, &es, &k);
 Affichage aff(&g, &es, &lc);
 
 #include "Moteur.h"
-Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_1, swa_2, swa_3, swa_4, swb_1, swb_2, swb_3, swb_4); 
+Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_1, swa_2, swa_3, swa_4, swb_1, swb_2, swb_3, swb_4);
 
-void interuptStop(){
+void interuptStop() {
   Serial.println("Stop pressed interupt");
   g.stop = 1;
 
 }
 
-void interuptOpto(){
+void interuptOpto() {
   g.posAbsolue += es.dirrection();
   g.posRelatif += es.dirrection();
   aff.affichage_tout();
 }
 
-void setup() 
+void setup()
 {
-    Serial.begin(9600); // initialise connexion série à 9600 bauds
-     attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
-    Serial.println("Ok, c'est parti");
-    g.get_config();   
-     g.lcd_init();
-     g.lcd1.print("Initialisation");
-   aff.affichage_tout();
+  Serial.begin(9600); // initialise connexion série à 9600 bauds
+  attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
+  Serial.println("Ok, c'est parti");
+  g.get_config();
+  g.lcd_init();
+  g.lcd1.print("Initialisation");
+  aff.affichage_tout();
 }
 
 
 
-void loop() 
+void loop()
 {
-es.tick();
+  es.tick();
 
 
-if(g.posAbsolueOld != g.posAbsolue){
+  if (g.posAbsolueOld != g.posAbsolue) {
     g.posAbsolueOld = g.posAbsolue;
     aff.affichage_absolue();
+  }
+
+  if (g.posRelatifOld != g.posRelatif) {
+    g.posRelatifOld = g.posRelatif;
+    aff.affichage_relatif();
+  }
+
+  //Serial.println(analogRead(p2));
+
+  handling();
+
+
+
+
+  aff.affichageConditionnel();
+
+  if (g.stop != 0) {
+    g.stop = 0;
+    delay(2000);
+  }
 }
 
-if(g.posRelatifOld != g.posRelatif){
-  g.posRelatifOld = g.posRelatif;
-  aff.affichage_relatif();
-}
 
-//Serial.println(analogRead(p2));
-
-handling();
-
-
-
-
-aff.affichageConditionnel();
-
-if(g.stop != 0){
-  g.stop = 0;
-  delay(2000);
-}
-}
-
-
-void handling(){
+void handling() {
   //image Arriere
-  if(es.testBoutonPressed(5)){
-      if(!es.testPulse()){
-        monMoteur.imageArriere();
-      } else {
-        monMoteur.pulseArriere();  
-      }
-   } 
-   // image avant
-   if(es.testBoutonPressed(6)){
-      if(!es.testPulse()){
-        monMoteur.imageAvant();
-      } else {
-        monMoteur.pulseAvant();  
-      }
-   }
-   // Arriere rapide
-   if(es.testBoutonPressed(7)){
-     while(es.testInter(7)){
+  if (es.testBoutonPressed(5)) {
+    if (!es.testPulse()) {
+      monMoteur.imageArriere();
+    } else {
+      monMoteur.pulseArriere();
+    }
+  }
+  // image avant
+  if (es.testBoutonPressed(6)) {
+    if (!es.testPulse()) {
+      monMoteur.imageAvant();
+    } else {
+      monMoteur.pulseAvant();
+    }
+  }
+  // Arriere rapide
+  if (es.testBoutonPressed(7)) {
+    while (es.testInter(7)) {
       es.tick();
-        if(!es.testPulse()){
-          monMoteur.imageArriere();
-        } else {
-          monMoteur.pulseArriere();  
-      }    
+      if (!es.testPulse()) {
+        monMoteur.arriere();
+      } else {
+        monMoteur.pulseArriere();
+      }
     }
 
-   }
-   // Arriere Rapide 
-   if(es.testBoutonPressed(8)){
-       while(es.testInter(8)){
-        es.tick();
-        if(!es.testPulse()){
-          monMoteur.imageAvant();
+  }
+  // Avance Rapide
+  if (es.testBoutonPressed(8)) {
+    while (es.testInter(8)) {
+      es.tick();
+      if (!es.testPulse()) {
+        monMoteur.avant();
+      } else {
+        monMoteur.pulseAvant();
+      }
+    }
+  }
+  // Bouton Go
+  if (es.testBoutonPressed(10) && g.ecritureClavier == 0) {
+    Serial.println("Go");
+    if ( es.dirrection() ) {
+      if (g.targetAbsolue == 0) {
+        if (es.testAvant()) {
+          while (g.stop == 0) {
+            monMoteur.avant();
+          }
         } else {
-          monMoteur.pulseAvant();  
+          while (g.stop == 0) {
+            monMoteur.arriere();
+          }
         }
       }
-   }
-    // Bouton Go
-    if(es.testBoutonPressed(10) && g.ecritureClavier == 0){
-      Serial.println("Go");
-      if(es.testAbsolue()){
-        monMoteur.goToAbsolue();
-      } else {
-        monMoteur.goToRelatif();
+      monMoteur.goToAbsolue();
+      g.targetAbsolue = 0;
+
+    } else {
+      if (g.targetRelatif == 0) {
+        if (es.dirrection()) {
+          while (g.stop == 0) {
+            monMoteur.avant();
+          }
+        } else {
+          while (g.stop == 0) {
+            monMoteur.arriere();
+          }
+        }
       }
-      
-   }
+      monMoteur.goToRelatif();
+      g.targetRelatif = 0;
+    }
 
-   if(es.touchContinu()){
-      g.refreshVitesse = 1;
-      aff.affichage_vitesse();
-      Serial.println("Continu touch");
-   }
+  }
 
-   if(es.touchAvant()){
+  if (es.touchContinu()) {
+    g.refreshVitesse = 1;
+    aff.affichage_vitesse();
+    Serial.println("Continu touch");
+  }
+
+  if (es.touchAvant()) {
     Serial.print("Avant");
     g.refresh = 1;
-    
+
   }
   g.codeK = g.tamponK;
   g.tamponK = k.get_key();
-  
-  if( g.tamponK == -1 && g.codeK == '#'){
-      int entreeClavier;
-      long tmpA;
-      g.ecritureClavier = 1;
-      if(es.testAbsolue()){
-        Serial.println("absolu");
-        g.lcd1.setCursor(0,1);
-        g.lcd1.print("Attente saisie        ");
-        tmpA = m.saisieClavier(g.lcd1,1);
-        g.targetAbsolue = tmpA;
-      } else {
-        Serial.println("Relatif");
-        g.lcd2.setCursor(0,1);
-        g.lcd2.print("Attente saisie        ");
-        tmpA = m.saisieClavier(g.lcd2,1);
-        g.targetRelatif = tmpA;
-      }
-        Serial.println(tmpA);
-        g.refresh = 1;
-      g.ecritureClavier = 0;
-     
-   } 
 
-   if(g.tamponK == -1 && g.codeK == '*' && g.ecritureClavier == 0 ){
+  if ( g.tamponK == -1 && g.codeK == '#') {
+    int entreeClavier;
+    long tmpA;
+    g.ecritureClavier = 1;
+    if (es.testAbsolue()) {
+      Serial.println("absolu");
+      g.lcd1.setCursor(0, 1);
+      g.lcd1.print("Attente saisie        ");
+      tmpA = m.saisieClavier(g.lcd1, 1);
+      g.targetAbsolue = tmpA;
+    } else {
+      Serial.println("Relatif");
+      g.lcd2.setCursor(0, 1);
+      g.lcd2.print("Attente saisie        ");
+      tmpA = m.saisieClavier(g.lcd2, 1);
+      g.targetRelatif = tmpA;
+    }
+    Serial.println(tmpA);
+    g.refresh = 1;
+    g.ecritureClavier = 0;
+
+  }
+
+  if (g.tamponK == -1 && g.codeK == '*' && g.ecritureClavier == 0 ) {
     g.save_config();
-   }
+  }
 
-   m.affichage_menu();
+  m.affichage_menu();
 
 }

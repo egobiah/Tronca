@@ -29,11 +29,11 @@ class Global {
 
    long posAbsolue = 1;
    long posAbsolueOld = 1;
-   long targetAbsolue = 1;
+   long targetAbsolue = 0;
 
    long posRelatif = 1;
    long posRelatifOld = 1;
-   long targetRelatif = 1;
+   long targetRelatif = 0;
 
    int nbPulseDesc;
 
