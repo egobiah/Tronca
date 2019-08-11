@@ -105,8 +105,7 @@ void Moteur::imageAvant() {
 
 
 
-  g->posRelatif++;
-  g->posAbsolue++;
+
   delay(g->tempsPose);
   a->affichage_tout();
 }
@@ -132,8 +131,6 @@ void Moteur::imageArriere() {
 
 
 
-  g->posRelatif--;
-  g->posAbsolue--;
   delay(g->tempsPose);
   a->affichage_tout();
 }

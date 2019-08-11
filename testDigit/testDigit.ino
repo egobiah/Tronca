@@ -11,6 +11,7 @@
  */
 LedControl lc=LedControl(44,52,48,2);
 int cmp = 0;
+int tmpi = 0;
 /* we always wait a bit between updates of the display */
 unsigned long delaytime=250;
 
@@ -27,8 +28,7 @@ void setup() {
 
  // writeArduinoOn7Segment();
 
-  intToLed(42);
-
+ 
 
 /*
  This method will display the characters for the
@@ -42,7 +42,8 @@ void setup() {
 
 void loop(){
  // intToLed(cmp);
-  cmp++;
+   intToLed(tmpi);
+  tmpi++;
   delay(10);
 }
 
@@ -54,6 +55,7 @@ void intToLed(int num){
     num = num/10;
     i++;
   }
+  lc.setRow(0,6,0b00000001);
 }
 
   

@@ -54,6 +54,7 @@ class Global {
    int refreshAbsolue = 0;
    int refreshRelatif = 0;
    int refreshVitesse = 0;
+   int refreshLC = 0;
 
    int cs_sd;
 // Fonction d'initialisation
