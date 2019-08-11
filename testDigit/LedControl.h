@@ -185,6 +185,3 @@ class LedControl {
 };
 
 #endif	//LedControl.h
-
-
-

@@ -18,10 +18,14 @@ void Global::lcd_init(){
 int Global::get_config(){
   int tmp;
   File myFile;
+
   
     if (!SD.begin(cs_sd)) {
         Serial.println("initialization failed!"); 
+        SD.end();
+          SPI.end();
         return 1;
+           
            
      }
     
@@ -40,30 +44,38 @@ int Global::get_config(){
             //Serial.println(tmpA);
             if(i == -1){
                 posAbsolue = tmp;
+                Serial.println(posAbsolue);
             } else {
                 *arg_file[i] = tmp;
+                Serial.println(*arg_file[i]);
             }
         }
         Serial.println("test pointeur debut");
-        Serial.println(*arg_file[0]);
-        Serial.println(vitesseContinuDebut);
+        
+      
         myFile.close();
 
-      SD.end();
-    SPI.end();
-
-        return 0;
+    
+  
+        
       }
+       SD.end();
+    SPI.end();
+      return 0;
 }
 
 
 int Global::save_config(){
+ 
   File myFile;
+  SPI.begin();
     if (!SD.begin(cs_sd)) {
         Serial.println("initialization failed!"); 
+         SD.end();
+         SPI.end();
         return 1;
     }
- 
+  
   SD.remove("config.txt");
   myFile = SD.open("config.txt", FILE_WRITE);
   myFile.print(posAbsolue);
@@ -74,10 +86,12 @@ int Global::save_config(){
   }
   myFile.close();
   Serial.println("Config sauvegatdee");
+ SD.end();
+SPI.end();
+ 
+    
 
-  SD.end();
-    SPI.end();
-
+Serial.println("Sauvegrdé");
   return 0;
 
 }
