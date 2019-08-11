@@ -71,7 +71,7 @@ int Menu::affichage_menu(){
         break;
       //Pente accélération
         case 4:
-        return simpleMenu(&g->PenteAcceleration, "Pente :");
+        return simpleMenu(&g->penteAcceleration, "Pente :");
         break;
   
       // Nb pulse apres desceleration        

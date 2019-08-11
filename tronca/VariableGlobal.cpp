@@ -1,83 +1,151 @@
-#include <SPI.h>
-#include <SD.h>
-#include "VariableGlobal.h" 
+#include "VariableGlobal.h"
 
 
-Global::Global(int pin){
-  cs_sd = pin;  
- 
+Global::Global(int config) {
+  
 }
 
-void Global::lcd_init(){
+void Global::lcd_init() {
   lcd1.init();
   lcd2.init();
   lcd1.backlight();
   lcd2.backlight();
 }
 
-int Global::get_config(){
-  int tmp;
-  File myFile;
+int Global::get_config() {
+  Serial.println("Recuperation des données en mémoire");
+
+
+  // PosAbsolue = 8 byte, le reste à 2
+  /* 0-7 posAbsolue
+     8-11 vitesseContinuDebut
+     12-15 vitesseContinuFin
+     16-19 vitesseIpIDebut
+     20-23 vitesseIpIFin
+     24-27 penteAcceleration
+     28-32 tempsPose
+  */
+  int res = 0;
+  long resLong = 0;
+  long tmp = 0;
+  byte eep;
   
-    if (!SD.begin(cs_sd)) {
-        Serial.println("initialization failed!"); 
-        return 1;
-           
-     }
-    
-    
-    myFile = SD.open("config.txt", FILE_READ);
-      if(myFile != 0){
-        for(int i = -1; i <  nb_arg_file; i++){
-          Serial.println("Getting files");
-            char c = myFile.read();
-            tmp = 0;
-            while(c != ';'){
-             // Serial.println(c);
-                tmp = tmp * 10 + c - 48;
-                c = myFile.read();
-            }
-            //Serial.println(tmpA);
-            if(i == -1){
-                posAbsolue = tmp;
-            } else {
-                *arg_file[i] = tmp;
-            }
-        }
-        Serial.println("test pointeur debut");
-        Serial.println(*arg_file[0]);
-        Serial.println(vitesseContinuDebut);
-        myFile.close();
+  for (int i = 0; i < 8; i++) {
+    eep = (EEPROM.read(0+i)) ;
+     for(int j = 7; j >= 0; j--){
+      tmp = (tmp << 1) + ((eep >> j)&1) ;
+    }
+  }
+  posAbsolue = tmp;
+  Serial.println("PosAbsolue");
+  Serial.println(posAbsolue);
+  res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(8+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  vitesseContinuDebut = res;
+  Serial.println("vitesseContinuDebut");
+  Serial.println(vitesseContinuDebut);
+  
+  res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(12+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  vitesseContinuFin = res;
+  Serial.println("vitesseContinuFin");
+  Serial.println(vitesseContinuFin);
 
-      SD.end();
-    SPI.end();
+  res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(16+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  vitesseIpIDebut = res;
+  Serial.println("vitesseIpIDebut");
+  Serial.println(vitesseIpIDebut);
 
-        return 0;
-      }
+  res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(20+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  vitesseIpIFin = res;
+  Serial.println("vitesseIpIFin");
+  Serial.println(vitesseIpIFin);
+
+  res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(24+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  penteAcceleration = res;
+  Serial.println("penteAcceleration");
+  Serial.println(penteAcceleration);
+
+  res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(28+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  tempsPose = res;
+  Serial.println("tempsPose");
+  Serial.println(tempsPose);
 }
 
 
-int Global::save_config(){
-  File myFile;
-    if (!SD.begin(cs_sd)) {
-        Serial.println("initialization failed!"); 
-        return 1;
-    }
- 
-  SD.remove("config.txt");
-  myFile = SD.open("config.txt", FILE_WRITE);
-  myFile.print(posAbsolue);
-  myFile.print(";");
-  for(int i = 0; i < nb_arg_file; i++){
-      myFile.print(*arg_file[i]);
-      myFile.print(";");
+int Global::save_config() {
+
+  // PosAbsolue = 8 byte, le reste à 4
+  /* 0-7 posAbsolue
+     8-11 vitesseContinuDebut
+     12-15 vitesseContinuFin
+     16-19 vitesseIpIDebut
+     20-23 vitesseIpIFin
+     24-27 penteAcceleration
+     28-32 tempsPose
+  */
+
+  for (int i = 0; i < 8; i++) {
+    EEPROM.write( 7 - i , (posAbsolue >> (8 * i)) & 0xff);
+    Serial.println((posAbsolue >> (8 * i)) & 0xff);
   }
-  myFile.close();
-  Serial.println("Config sauvegatdee");
 
-  SD.end();
-    SPI.end();
+  for (int i = 0; i < 2; i++) {
+    EEPROM.write( 11-i , (vitesseContinuDebut >> (8 * i)) & 0xff);
+  }
 
-  return 0;
+    for (int i = 0; i < 2; i++) {
+    EEPROM.write( 15-i , (vitesseContinuFin >> (8 * i)) & 0xff);
+  }
 
+    for (int i = 0; i < 2; i++) {
+    EEPROM.write( 19-i , (vitesseIpIDebut >> (8 * i)) & 0xff);
+  }
+
+    for (int i = 0; i < 2; i++) {
+    EEPROM.write( 23-i , (vitesseIpIFin >> (8 * i)) & 0xff);
+  }
+
+    for (int i = 0; i < 2; i++) {
+    EEPROM.write( 27-i, (penteAcceleration >> (8 * i)) & 0xff);
+  }
+
+    for (int i = 0; i < 2; i++) {
+    EEPROM.write( 31-i , (tempsPose >> (8 * i)) & 0xff);
+  }
+  Serial.println("Sauvegardé");
 }

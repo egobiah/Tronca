@@ -3,6 +3,8 @@
 #include "src/LiquidCrystal_I2C.h"
 #define I2C_LCD1 0x21
 #define I2C_LCD2 0x22
+#include <Arduino.h>
+#include <EEPROM.h>
 
 class Global {
 
@@ -12,22 +14,22 @@ class Global {
  LiquidCrystal_I2C lcd1 = LiquidCrystal_I2C(I2C_LCD1,16,2);
  LiquidCrystal_I2C lcd2 = LiquidCrystal_I2C(I2C_LCD2,16,2);
   // Variable sauvegardé
-   int vitesseContinu = 1;
-   int vitesseContinuDebut =1;
-   int vitesseContinuFin = 100;
+   int vitesseContinu = 5;
+   int vitesseContinuDebut =25;
+   int vitesseContinuFin = 255;
 
    int vitesseIpI = 1;
    int vitesseIpIDebut = 1;
-   int vitesseIpIFin = 1;
+   int vitesseIpIFin = 10;
 
    int *vitesse[2] = {&vitesseIpI, &vitesseContinu};
 
    int nbPasMoteurA = 1;
    int nbPasMoteurB = 1;
-   int PenteAcceleration =1;
+   int penteAcceleration = 1;
    int tempsPose = 1;
 
-   long posAbsolue = 1;
+   long posAbsolue = 123456789;
    long posAbsolueOld = 1;
    long targetAbsolue = 0;
 
@@ -38,8 +40,8 @@ class Global {
    int nbPulseDesc;
 
   int stop = 0;
-#define nb_arg_file 8
-  int * arg_file[10] = {&vitesseContinuDebut, &vitesseContinuFin, &vitesseIpIDebut, &vitesseIpIFin, &nbPasMoteurA, &PenteAcceleration, &nbPulseDesc, &tempsPose};
+
+  
 
 
    int menu = 0;
@@ -55,10 +57,10 @@ class Global {
    int refreshRelatif = 0;
    int refreshVitesse = 0;
 
-   int cs_sd;
+  
 // Fonction d'initialisation
 // Pin de la carte SD
-   Global(int pin);
+   Global(int config);
    void lcd_init();
 // Fonction carte SD
    int get_config();

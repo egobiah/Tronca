@@ -1,4 +1,3 @@
-#define cs_SD 53
 #include <string.h>
 #include <math.h>
 
@@ -76,7 +75,7 @@ int opto = 4;
 Keypad k(0x20);
 
 #include "VariableGlobal.h"
-Global g(cs_SD);
+Global g(0);
 
 #include "EntreeSortie.h"
 EntreeSortie es(input, 12, led, 12, &g); ;
