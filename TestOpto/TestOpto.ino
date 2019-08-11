@@ -1,24 +1,19 @@
     
 //Permet de contrôler le driver d'un moteur pas à pas en manipulant les switchs par le biais de 4 optatocoupleurs PC815.
-#include <Arduino.h>
+
 #include <FlexyStepper.h>
-#define plafond 160
-const int moteurA = 13;
-const int moteurA_direction = 12;
+#define plafond 60
+const int moteurA = 9;
+const int moteurA_direction = 4;
 
 
 
-int opto = A15;
+int opto = A0;
 
-int sw5_a = A0;
-int sw6_a = A1;
-int sw7_a = A2;
-int sw8_a = A3;
-
-int sw5_b = A4;
-int sw6_b = A5;
-int sw7_b = A6;
-int sw8_b = A7;
+int sw5_A = 10;
+int sw6_A = 11;
+int sw7_A = 12;
+int sw8_A = 13;
 FlexyStepper stepper1;
 FlexyStepper stepper2; 
 int tmpH = 0;
@@ -29,15 +24,10 @@ int val;
 void setup() {
   // put your setup code here, to run once:
 
-Serial.begin(9600);
-  pinMode (sw5_a, OUTPUT);
-  pinMode (sw6_a, OUTPUT);
-  pinMode (sw7_a, OUTPUT);
-  pinMode (sw8_a, OUTPUT);
-    pinMode (sw5_b, OUTPUT);
-  pinMode (sw6_b, OUTPUT);
-  pinMode (sw7_b, OUTPUT);
-  pinMode (sw8_b, OUTPUT);
+  pinMode (sw5_A, OUTPUT);
+  pinMode (sw6_A, OUTPUT);
+  pinMode (sw7_A, OUTPUT);
+  pinMode (sw8_A, OUTPUT);
   
 
   pinMode (moteurA, OUTPUT);                    // moteurs A en mouvement PULLUP à installer? pin9
@@ -49,15 +39,11 @@ Serial.begin(9600);
 
 
 
-    Serial.println("Init");
-   intToSwitch(12800, 0);
-   intToSwitch(25600, 1);
-
-
-  
+    vingt_cinq_mille_six_cent; //------------------------------------------------------------Super----
     stepper1.setAccelerationInStepsPerSecondPerSecond(800);   //acceleration
-    stepper1.setSpeedInStepsPerSecond(400);  
+    stepper1.setSpeedInStepsPerSecond(12800);  
 
+Serial.begin(9600);
 pinMode (opto, INPUT);
  
 
@@ -65,77 +51,236 @@ pinMode (opto, INPUT);
 
 void loop() 
 {
- // Serial.println("AHA");
   
     stepper1.moveRelativeInSteps(1);
     val = analogRead(opto);
     if(val <= plafond && tmpH == 0){
-      tmpH = 4;
+      tmpH = 2;
       Serial.println("C'est dans la boite");
       // Prendre photos ici
       delay(4000);
-         intToSwitch(400, 0);
-        intToSwitch(800, 1);
     }
- 
-
-    if(val > plafond +25 && tmpH == 4){
-      tmpH = 3;
- 
+    if(val > plafond &&  tmpH == 2){
+      tmpH = 1;
     }
 
-   if(val > plafond +200 && tmpH == 3){
-      tmpH = 2;
-  
-    }
-
-    if(val < plafond + 190 && tmpH == 2){
+    if(val > plafond +200 && tmpH == 1){
       tmpH = 0;
-        intToSwitch(12800, 0);
-        intToSwitch(25600, 1);
     }
-    
-
-    stepper1.moveRelativeInSteps(1);
   Serial.println(analogRead(opto));
-  
 
   
 }
-/*
-   digitalWrite (sw5_a, LOW);
-  digitalWrite (sw6_a, HIGH);
-  digitalWrite (sw7_a, HIGH);
-  digitalWrite (sw8_a, HIGH);
 
-  digitalWrite (sw5_b, LOW);
-  digitalWrite (sw6_b, HIGH);
-  digitalWrite (sw7_b, HIGH);
-  digitalWrite (sw8_b, HIGH);
+void quatre_cent () //off on on on
+{
+  digitalWrite (sw5_A, LOW);
+  digitalWrite (sw6_A, HIGH);
+  digitalWrite (sw7_A, HIGH);
+  digitalWrite (sw8_A, HIGH);
+}
 
-  */
+void huit_cent () //off on on on
+{
+  digitalWrite (sw5_A, HIGH);
+  digitalWrite (sw6_A, LOW);
+  digitalWrite (sw7_A, HIGH);
+  digitalWrite (sw8_A, HIGH);
+}
 
-void intToSwitch(int pas, int sw) {
-  int i = pas/400;
-  int bin = 1;
-  while(i >> bin != 0){
-    bin++;
-  }
+void mille_six_cent () //off on on on
+{
+  digitalWrite (sw5_A, LOW);
+  digitalWrite (sw6_A, LOW);
+  digitalWrite (sw7_A, HIGH);
+  digitalWrite (sw8_A, HIGH);
+}
 
-  Serial.println(bin);
-  if (sw == 0) {
-    digitalWrite(sw5_a , ((bin >> 0) &1) ^1  );
-    digitalWrite(sw6_a , ((bin >> 1) &1) ^1  );
-    digitalWrite(sw7_a , ((bin >> 2) &1) ^1  );
-    digitalWrite(sw8_a , ((bin >> 3) &1) ^1  );
+void trois_mille_deux_cent () //off on on on
+{
+  digitalWrite (sw5_A, HIGH);
+  digitalWrite (sw6_A, HIGH);
+  digitalWrite (sw7_A, LOW);
+  digitalWrite (sw8_A, HIGH);
+}
 
- 
-  } else {
+void six_mille_quatre_cent () //off on on on
+{
+  digitalWrite (sw5_A, LOW);
+  digitalWrite (sw6_A, HIGH);
+  digitalWrite (sw7_A, LOW);
+  digitalWrite (sw8_A, HIGH);
+}
 
-    digitalWrite(sw5_b , ((bin >> 0) &1) ^1 );
-    digitalWrite(sw6_b , ((bin >> 1) &1) ^1 );
-    digitalWrite(sw7_b , ((bin >> 2) &1) ^1 );
-    digitalWrite(sw8_b , ((bin >> 3) &1) ^1 );
-  }
-  Serial.println("init switch");
+void douze_mille_huit_cent () 
+{
+  digitalWrite (sw5_A, HIGH);
+  digitalWrite (sw6_A, LOW);
+  digitalWrite (sw7_A, LOW);
+  digitalWrite (sw8_A, HIGH);
+}
+
+void vingt_cinq_mille_six_cent () 
+{
+  digitalWrite (sw5_A, LOW);
+  digitalWrite (sw6_A, LOW);
+  digitalWrite (sw7_A, LOW);
+  digitalWrite (sw8_A, HIGH);
+}
+
+
+void test_serie_A() {
+  
+  quatre_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(50);
+  delay (500);
+
+    huit_cent(); //---------------------------------------------OK pour DEPLACEMENT--------------------------------------------------
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(50);
+  delay (500);
+
+    mille_six_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(50);
+  delay (500);
+
+    trois_mille_deux_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(50);
+  delay (500);
+
+    six_mille_quatre_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(50);
+  delay (500);
+
+    douze_mille_huit_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(50);
+  delay (500);
+
+    vingt_cinq_mille_six_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(50);
+  delay (500);
+}
+
+//-----------------------------------------------SERIE B--------------------------------------------------------------------
+
+void test_serie_B() {
+  
+    quatre_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(50);
+  delay (500);
+
+    huit_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(100);
+  delay (500);
+
+    mille_six_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(200);
+  delay (500);
+
+    trois_mille_deux_cent(); //---------------------------------------ok pour image par image---------------------------------------
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(400);
+  delay (500);
+
+    six_mille_quatre_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(800);
+  delay (500);
+
+    douze_mille_huit_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(1600);
+  delay (500);
+
+    vingt_cinq_mille_six_cent(); //-----------------------------------ok pour calage----------------------------------------------
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(400);      
+    stepper1.moveRelativeInSteps(3200);
+  delay (500);
+}
+
+
+void  deplacement_rapide_A() //-------------------bien
+{
+     quatre_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(400);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(800);      
+    stepper1.moveRelativeInSteps(50*100);
+  delay (500);
+
+    huit_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(800);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(3200);      
+    stepper1.moveRelativeInSteps(100*100);
+  delay (500);
+
+    mille_six_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(6400);      
+    stepper1.moveRelativeInSteps(200*100);
+  delay (500); 
+}
+
+void  deplacement_rapide_B() //-------------------
+{
+     quatre_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(800);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(800);      
+    stepper1.moveRelativeInSteps(50*100);
+  delay (500);
+
+    huit_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(3200);      
+    stepper1.moveRelativeInSteps(100*100);
+  delay (500);
+
+    mille_six_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(3200);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(6400);      
+    stepper1.moveRelativeInSteps(200*100);
+  delay (500); 
+}
+
+void  deplacement_rapide_C() //-------------------OK
+{
+    quatre_cent();
+    stepper1.setAccelerationInStepsPerSecondPerSecond(1600);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(800);      
+    stepper1.moveRelativeInSteps(50*100);
+  delay (1000);
+
+    huit_cent(); //------------------------------------------------------------Super----
+    stepper1.setAccelerationInStepsPerSecondPerSecond(3200);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(6400);      
+    stepper1.moveRelativeInSteps(50000);
+  delay (5000);
+
+    mille_six_cent(); //-------------------------------------------------------Super aussi!----
+    stepper1.setAccelerationInStepsPerSecondPerSecond(6400);   //acceleration
+    stepper1.setSpeedInStepsPerSecond(6400);      
+    stepper1.moveRelativeInSteps(200*100);
+  delay (1000); 
 }

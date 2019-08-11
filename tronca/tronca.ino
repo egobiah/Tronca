@@ -55,23 +55,21 @@ int led[12] = {i1T, i1B, i2T, i2B, i3T, i3B, i4T, i4B, i5T, i5B};
 int input[12] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur};
 //
 
-int moteur = 13;
-int dirMoteur = 12;
+int moteur = 0;
+int dirMoteur = 0;
 
-int swa_1 = A0;
-int swa_2 = A1;
-int swa_3 = A2;
-int swa_4 = A3;
+int swa_1 = 0;
+int swa_2 = 0;
+int swa_3 = 0;
+int swa_4 = 0;
 
-int swb_1 = A4;
-int swb_2 = A5;
-int swb_3 = A6;
-int swb_4 = A7;
+int swb_1 = 0;
+int swb_2 = 0;
+int swb_3 = 0;
+int swb_4 = 0;
 
 int tmpA;
 int tmpB;
-
-int opto = 4;
 #include "Keypad.h"
 Keypad k(0x20);
 
@@ -97,7 +95,6 @@ void interuptStop() {
 }
 
 void interuptOpto() {
-  Serial.println("Detect Opto");
   g.posAbsolue += es.dirrection();
   g.posRelatif += es.dirrection();
   aff.affichage_tout();
@@ -106,9 +103,7 @@ void interuptOpto() {
 void setup()
 {
   Serial.begin(9600); // initialise connexion série à 9600 bauds
-  pinMode(opto,INPUT);
   attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
-  //attachInterrupt(digitalPinToInterrupt(opto), interuptStop, CHANGE);
   Serial.println("Ok, c'est parti");
   g.get_config();
   g.lcd_init();
@@ -137,8 +132,8 @@ void loop()
 
   handling();
 
- // Serial.println(digitalRead(opto));
-  
+
+
 
   aff.affichageConditionnel();
 
@@ -196,7 +191,7 @@ void handling() {
       if (g.targetAbsolue == 0) {
         if (es.testAvant()) {
           while (g.stop == 0) {
-            monMoteur.imageAvant();
+            monMoteur.avant();
           }
         } else {
           while (g.stop == 0) {
@@ -211,7 +206,7 @@ void handling() {
       if (g.targetRelatif == 0) {
         if (es.dirrection()) {
           while (g.stop == 0) {
-            monMoteur.imageAvant();
+            monMoteur.avant();
           }
         } else {
           while (g.stop == 0) {
