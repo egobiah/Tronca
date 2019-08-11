@@ -1,7 +1,7 @@
 #include "Moteur.h"
-#define plafondBas 60
-#define plafondMid 200
-#define plafondHaut 250
+#define plafondBas 160
+#define plafondMid 350
+#define plafondHaut 360
 
 Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, int pinDirMoteur, int pin_swa_1, int pin_swa_2, int pin_swa_3, int pin_swa_4,  int pin_swb_1, int pin_swb_2, int pin_swb_3, int pin_swb_4) {
   g = g1;
@@ -20,15 +20,15 @@ Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, i
   swb_3 = pin_swb_3;
   swb_4 = pin_swb_4;
 
-  pinMode( pin_swa_1, INPUT);
-  pinMode(pin_swa_2 , INPUT);
-  pinMode( pin_swa_3, INPUT);
-  pinMode(pin_swa_4 , INPUT);
+  pinMode( pin_swa_1, OUTPUT);
+  pinMode(pin_swa_2 , OUTPUT);
+  pinMode( pin_swa_3, OUTPUT);
+  pinMode(pin_swa_4 , OUTPUT);
 
-  pinMode(pin_swb_1 , INPUT);
-  pinMode( pin_swb_2, INPUT);
-  pinMode(pin_swb_3 , INPUT);
-  pinMode( pin_swb_4, INPUT);
+  pinMode(pin_swb_1 , OUTPUT);
+  pinMode( pin_swb_2, OUTPUT);
+  pinMode(pin_swb_3 , OUTPUT);
+  pinMode( pin_swb_4, OUTPUT);
 
 
 
@@ -45,26 +45,26 @@ void Moteur::pulseArriere() {
 
 void Moteur::callageAvant() {
   Serial.println("Callage");
-  intToSwitch(25600, 0);
-  intToSwitch(12800, 1);
-  stepper.setAccelerationInStepsPerSecondPerSecond(800);   //acceleration
-  stepper.setSpeedInStepsPerSecond(12800);
-  while (analogRead(A0) >= 60) {
+  intToSwitch(12800, 0);
+  intToSwitch(25600, 1);
+
+  while (analogRead(A15) >= plafondBas) {
     stepper.moveRelativeInSteps(1);
   }
   Serial.println("Photos!");
+  
 }
 
 void Moteur::callageArriere() {
   Serial.println("Callage");
-  intToSwitch(25600, 0);
-  intToSwitch(12800, 1);
-  stepper.setAccelerationInStepsPerSecondPerSecond(800);   //acceleration
-  stepper.setSpeedInStepsPerSecond(12800);
-  while (analogRead(A0) >= 60) {
-    stepper.moveRelativeInSteps(-1);
+  intToSwitch(12800, 0);
+  intToSwitch(25600, 1);
+
+  while (analogRead(A15) >= plafondBas) {
+    stepper.moveRelativeInSteps(-2);
   }
   Serial.println("Photos!");
+  
 }
 
 void Moteur::avant() {
@@ -91,15 +91,16 @@ void Moteur::imageAvant() {
   Serial.println("Une image Avant");
   intToSwitch(800, 0);
   intToSwitch(400, 1);
-  stepper.setAccelerationInStepsPerSecondPerSecond(1600);  //acceleration
+  stepper.setAccelerationInStepsPerSecondPerSecond(800);  //acceleration
   stepper.setSpeedInStepsPerSecond(400);
-  while (!(i == 1 && analogRead(A0) < plafondMid)) {
-    if (analogRead(A0) > plafondHaut && i == 0) {
-      stepper.moveRelativeInSteps(80);
+  while (!(i == 1 && analogRead(A15) < plafondMid)) {
+    stepper.moveRelativeInSteps(1);
+    if (analogRead(A15) > plafondHaut && i == 0) {      
       i = 1;
     }
   }
   callageAvant();
+  delay(2000);
 
 
 
@@ -109,30 +110,35 @@ void Moteur::imageAvant() {
   delay(g->tempsPose);
   a->affichage_tout();
 }
+
+
 void Moteur::imageArriere() {
   int i = 0;
   int j = 0;
-  Serial.println("Une image Avant");
+  Serial.println("Une Arriere");
   intToSwitch(800, 0);
   intToSwitch(400, 1);
-  stepper.setAccelerationInStepsPerSecondPerSecond(1600);  //acceleration
+  stepper.setAccelerationInStepsPerSecondPerSecond(800);  //acceleration
   stepper.setSpeedInStepsPerSecond(400);
-  while (!(i == 1 && analogRead(A0) < plafondMid)) {
-    if (analogRead(A0) > plafondHaut && i == 0) {
-      stepper.moveRelativeInSteps(-80);
+  while (!(i == 1 && analogRead(A15) < plafondMid)) {
+    stepper.moveRelativeInSteps(-2);
+    if (analogRead(A15) > plafondHaut && i == 0) {      
       i = 1;
     }
   }
   callageArriere();
+  delay(2000);
 
 
 
 
-  g->posRelatif++;
-  g->posAbsolue++;
+  g->posRelatif--;
+  g->posAbsolue--;
   delay(g->tempsPose);
   a->affichage_tout();
 }
+
+
 
 void Moteur::goToAbsolue() {
   Serial.println("C'est parti pour aller en absolue: ");
@@ -173,19 +179,26 @@ void Moteur::goToRelatif() {
 }
 
 void Moteur::intToSwitch(int pas, int sw) {
-  int bin = pas / 400;
-  if (sw == 0) {
-    swa_1 = bin & 1;
-    swa_2 = (bin >> 1) & 1;
-    swa_3 = (bin >> 2) & 1;
-    swa_4 = (bin >> 3) & 1;
-  } else {
-    swb_1 = bin & 1;
-    swb_2 = (bin >> 1) & 1;
-    swb_3 = (bin >> 2) & 1;
-    swb_4 = (bin >> 3) & 1;
+  int i = pas/400;
+  int bin = 1;
+  while(i >> bin != 0){
+    bin++;
   }
 
-  int i = pas / 400;
+  Serial.println(bin);
+  if (sw == 0) {
+    digitalWrite(swa_1 , ((bin >> 0) &1) ^1  );
+    digitalWrite(swa_2 , ((bin >> 1) &1) ^1  );
+    digitalWrite(swa_3 , ((bin >> 2) &1) ^1  );
+    digitalWrite(swa_4 , ((bin >> 3) &1) ^1  );
 
+ 
+  } else {
+
+    digitalWrite(swb_1 , ((bin >> 0) &1) ^1 );
+    digitalWrite(swb_2 , ((bin >> 1) &1) ^1 );
+    digitalWrite(swb_3 , ((bin >> 2) &1) ^1 );
+    digitalWrite(swb_4 , ((bin >> 3) &1) ^1 );
+  }
+  Serial.println("init switch");
 }
