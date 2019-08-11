@@ -2,13 +2,19 @@
 #include <math.h>
 #include <Arduino.h>
 
-Affichage::Affichage(Global * g1, EntreeSortie * es1, LedControl * lc1){
+Affichage::Affichage(Global * g1, EntreeSortie * es1, LedControl * lc_1, LedControl * lc_2){
   g = g1;  
   es = es1;
-  lc= lc1;
-  lc->shutdown(0,false);
+  lc1= lc_1;
+  lc2= lc_2;
+  lc1->shutdown(0,false);
   /* Set the brightness to a medium values */
-  lc->setIntensity(0,8);
+  lc1->setIntensity(0,8);
+  /* and clear the display */
+
+    lc2->shutdown(0,false);
+  /* Set the brightness to a medium values */
+  lc2->setIntensity(0,8);
   /* and clear the display */
 }
 
@@ -21,7 +27,7 @@ void Affichage::affichage_absolue(){
     g->lcd1.setCursor(0,1);
     g->lcd1.print(g->targetAbsolue);
   }
-  intToLed(g->posAbsolue);
+  intToLed(g->posAbsolue,lc1);
   g->refreshAbsolue = 0;
   
   
@@ -53,6 +59,7 @@ void Affichage::affichage_relatif(){
   g->lcd2.setCursor(0,0);
   g->lcd2.print("R");
   g->lcd2.print(g->posRelatif);
+  intToLed(g->posRelatif,lc2);
   
   
 
@@ -72,19 +79,27 @@ void Affichage::affichage_relatif(){
   g->refreshRelatif = 0;
 }
 
-void Affichage::intToLed(long num){
+void Affichage::intToLed(long num, LedControl * lc){
   lc->clearDisplay(0);
   int i = 0;
   int tmpLed = 0;
+  int negatif = (num < 0);
+  if(negatif){
+     
+    lc->setRow(0,i+1,0b00000001);
+     num = -num;
+  }
+  
   if(num == 0){
     lc->setDigit(0,0,0,0);
   }
-  while(num > 0){
+  while(num != 0){
     tmpLed = num%10;
     lc->setDigit(0,i,tmpLed,0);
     num = num/10;
     i++;
   }
+ 
 
 }
 
@@ -114,4 +129,9 @@ void Affichage::affichageConditionnel(){
     g->refreshRelatif = 0;
   }
   
+}
+
+void Affichage::affichage_lc(){
+  intToLed(g->posAbsolue,lc1);
+  intToLed(g->posRelatif,lc2);
 }

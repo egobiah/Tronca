@@ -83,6 +83,7 @@ int Global::get_config() {
   Serial.println("vitesseIpIFin");
   Serial.println(vitesseIpIFin);
 
+
   res = 0;
   for (int i = 0; i < 4; i++) {
     eep = (EEPROM.read(24+i)) ;

@@ -7,7 +7,9 @@
 
 int cs_led = 48;
 #include "src/LedControl.h"
-LedControl lc = LedControl(44, 52, 48, 2);
+LedControl lc1 = LedControl(44, 52, 48, 2);
+
+LedControl lc2 = LedControl(9, 52, 8, 2);
 
 
 
@@ -55,7 +57,7 @@ int input[12] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur};
 //
 
 int moteur = 13;
-int dirMoteur = 12;
+int dirMoteur = 12;   
 
 int swa_1 = A0;
 int swa_2 = A1;
@@ -70,7 +72,10 @@ int swb_4 = A7;
 int tmpA;
 int tmpB;
 
-int opto = 4;
+int opto = 3;
+int opto2 = 18;
+int optoAnalogue = A14;
+int detecting_opto = 0;
 #include "Keypad.h"
 Keypad k(0x20);
 
@@ -84,7 +89,7 @@ EntreeSortie es(input, 12, led, 12, &g); ;
 Menu m(&g, &es, &k);
 
 #include "Affichage.h"
-Affichage aff(&g, &es, &lc);
+Affichage aff(&g, &es, &lc1, &lc2);
 
 #include "Moteur.h"
 Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_1, swa_2, swa_3, swa_4, swb_1, swb_2, swb_3, swb_4);
@@ -95,24 +100,46 @@ void interuptStop() {
 
 }
 
-void interuptOpto() {
+
+void interuptOpto() 
+{ 
+  detachInterrupt(digitalPinToInterrupt(opto));
+  
+  
+  
+  
   Serial.println("Detect Opto");
+ 
   g.posAbsolue += es.dirrection();
   g.posRelatif += es.dirrection();
-  aff.affichage_tout();
+  aff.affichage_lc();
+  attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
+ 
+  
+  
+}
+
+void interuptInteruptOpto(){
+  detachInterrupt(digitalPinToInterrupt(opto2));
+  attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, HIGH);
+  Serial.println("Detachage d'interupt");
 }
 
 void setup()
 {
   Serial.begin(9600); // initialise connexion série à 9600 bauds
-  pinMode(opto,INPUT);
+  pinMode(opto,INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
-  //attachInterrupt(digitalPinToInterrupt(opto), interuptStop, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
+  //attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
   Serial.println("Ok, c'est parti");
   g.get_config();
   g.lcd_init();
   g.lcd1.print("Initialisation");
   aff.affichage_tout();
+  pinMode(optoAnalogue,INPUT);
+  
+  
 }
 
 
@@ -125,6 +152,7 @@ void loop()
   if (g.posAbsolueOld != g.posAbsolue) {
     g.posAbsolueOld = g.posAbsolue;
     aff.affichage_absolue();
+    
   }
 
   if (g.posRelatifOld != g.posRelatif) {
