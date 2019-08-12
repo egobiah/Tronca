@@ -1,10 +1,11 @@
 #include "Menu.h"
 
 
-Menu::Menu(Global * g1, EntreeSortie * es1, Keypad * kp1){
+Menu::Menu(Global * g1, EntreeSortie * es1, Keypad * kp1, Moteur * m1){
   g = g1;
   es = es1;
   k = kp1;
+  m = m1;
 
 }
 
@@ -47,7 +48,8 @@ int Menu::affichage_menu(){
 
   
   
-  
+ 
+
         
       g->lcd2.clear();
       switch(g->posMenu){
@@ -71,17 +73,21 @@ int Menu::affichage_menu(){
         break;
       //Pente accélération
         case 4:
-        return simpleMenu(&g->penteAcceleration, "Pente :");
+          m->calibrage();
+          g->menu = 0;
+          g->subMenu =0;
+          g->posMenu = 0;
+          g->refresh=1;
         break;
   
       // Nb pulse apres desceleration        
         case 5:
-        return simpleMenu(&g->nbPulseDesc, "Nb pulse");
+        return doubleMenu(&g->ledMin, &g->ledMax, "Valeur Min", "Valeur Max");
         break;
 
       // Temps de pose        
         case 6:
-        return simpleMenu(&g->tempsPose, "Tps pose");
+        return simpleMenu(&m->seuil, "Val au dessus de ledMin");
         break;
 
       // Retour        
@@ -193,7 +199,7 @@ int Menu::affichage_menu(){
         g->lcd1.clear();
         g->lcd1.setCursor(0,0);
         g->lcd1.print("Configuration faite");
-        g->save_config();
+        //g->save_config();
         delay(1000);
         g->subMenu = 0;
         g->menu = 0; 
@@ -233,7 +239,7 @@ int Menu::simpleMenu(int *a, String s){
     g->lcd1.clear();
     g->lcd1.print("Configuration fini");
     g->refresh=1;
-    g->save_config();
+    //g->save_config();
     g->subMenu = 0;
     g->menu = 0;
     return 1;

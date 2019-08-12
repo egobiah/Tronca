@@ -1,7 +1,7 @@
 #include "Moteur.h"
-#define plafondBas 160
-#define plafondMid 350
-#define plafondHaut 360
+#define plafondBas g->ledMin+seuil
+#define plafondMid (g->ledMax+g->ledMin)/2
+#define plafondHaut g->ledMax-40
 
 Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, int pinDirMoteur, int pin_swa_1, int pin_swa_2, int pin_swa_3, int pin_swa_4,  int pin_swb_1, int pin_swb_2, int pin_swb_3, int pin_swb_4) {
   g = g1;
@@ -47,8 +47,9 @@ void Moteur::callageAvant() {
   Serial.println("Callage");
   intToSwitch(12800, 0);
   intToSwitch(25600, 1);
+  stepper.setSpeedInStepsPerSecond(200);
 
-  while (analogRead(A15) >= plafondBas) {
+  while (analogRead(capteurLed ) >= plafondBas && g->stop == 0) {
     stepper.moveRelativeInSteps(1);
   }
   Serial.println("Photos!");
@@ -60,7 +61,7 @@ void Moteur::callageArriere() {
   intToSwitch(12800, 0);
   intToSwitch(25600, 1);
 
-  while (analogRead(A15) >= plafondBas) {
+  while (analogRead(capteurLed ) >= plafondBas) {
     stepper.moveRelativeInSteps(-2);
   }
   Serial.println("Photos!");
@@ -91,11 +92,13 @@ void Moteur::imageAvant() {
   Serial.println("Une image Avant");
   intToSwitch(800, 0);
   intToSwitch(400, 1);
-  stepper.setAccelerationInStepsPerSecondPerSecond(800);  //acceleration
-  stepper.setSpeedInStepsPerSecond(400);
-  while (!(i == 1 && analogRead(A15) < plafondMid)) {
+  stepper.setAccelerationInStepsPerSecondPerSecond(3200);  //acceleration
+  stepper.setSpeedInStepsPerSecond(800);
+  int tour = 0;
+  while (!(i == 1 && analogRead(capteurLed ) < plafondMid && g->stop == 0)) {
+    
     stepper.moveRelativeInSteps(1);
-    if (analogRead(A15) > plafondHaut && i == 0) {      
+    if (analogRead(capteurLed ) > plafondHaut && i == 0) {      
       i = 1;
     }
   }
@@ -119,9 +122,9 @@ void Moteur::imageArriere() {
   intToSwitch(400, 1);
   stepper.setAccelerationInStepsPerSecondPerSecond(800);  //acceleration
   stepper.setSpeedInStepsPerSecond(400);
-  while (!(i == 1 && analogRead(A15) < plafondMid)) {
+  while (!(i == 1 && analogRead(capteurLed ) < plafondMid)) {
     stepper.moveRelativeInSteps(-2);
-    if (analogRead(A15) > plafondHaut && i == 0) {      
+    if (analogRead(capteurLed ) > plafondHaut && i == 0) {      
       i = 1;
     }
   }
@@ -182,7 +185,7 @@ void Moteur::intToSwitch(int pas, int sw) {
     bin++;
   }
 
-  Serial.println(bin);
+  
   if (sw == 0) {
     digitalWrite(swa_1 , ((bin >> 0) &1) ^1  );
     digitalWrite(swa_2 , ((bin >> 1) &1) ^1  );
@@ -197,5 +200,38 @@ void Moteur::intToSwitch(int pas, int sw) {
     digitalWrite(swb_3 , ((bin >> 2) &1) ^1 );
     digitalWrite(swb_4 , ((bin >> 3) &1) ^1 );
   }
-  Serial.println("init switch");
+ 
+}
+
+void Moteur::calibrage(){
+  int min = g->ledMin;
+  int max = g->ledMax;
+ 
+  intToSwitch(12800, 0);
+  intToSwitch(25600, 1);
+  stepper.setSpeedInStepsPerSecond(6400);
+  for(int i = 0; i < 12800 && g->stop == 0; i++){
+    int lecture = analogRead(capteurLed );
+    if(lecture < min){
+     
+      min = lecture;
+    }
+    if(lecture > max){
+      max = lecture;
+    }
+    a->intToLed(lecture,a->lc1);
+     stepper.moveRelativeInSteps(1);
+    g->ledMin = min;
+    g->ledMax = max;
+    a->intToLed(g->ledMax,a->lc2);
+  a->lc2->setDigit(0,7,g->ledMin/100,0);
+  a->lc2->setDigit(0,6,(g->ledMin%100)/10,0);
+  a->lc2->setDigit(0,5,g->ledMin%10,0);
+  }
+  
+
+  Serial.println("Reglage Capteur finis");
+  Serial.println(g->ledMin);
+  Serial.println(g->ledMax);
+  
 }

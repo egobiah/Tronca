@@ -5,6 +5,7 @@
 #include "VariableGlobal.h"
 #include "Affichage.h"
 #include "EntreeSortie.h"
+
 #include <Arduino.h>
 class Moteur{
   private:
@@ -20,6 +21,8 @@ class Moteur{
   int swb_2= 0;
   int swb_3 = 0;
   int swb_4 = 0;
+
+  int capteurLed  = A15;
   Global * g;
   Affichage * a;
   EntreeSortie * es;
@@ -43,6 +46,11 @@ class Moteur{
   void goToRelatif();
   void goToAbsolue();
   void intToSwitch(int pas, int sw);
+
+  void calibrage();
+
+  int seuil = 30;
+  
 };
 
 

@@ -4,6 +4,7 @@
 #include "src/RotaryEncoder.h"
 #include "EntreeSortie.h"
 #include "Keypad.h"
+#include "Moteur.h"
 #include <Arduino.h>
 
 
@@ -14,12 +15,26 @@ class Menu{
   public:
   
 
-  Menu(Global * g1, EntreeSortie * es1, Keypad * kp1);
+  Menu(Global * g1, EntreeSortie * es1, Keypad * kp1, Moteur * m1);
+
+    /* 0-7 posAbsolue
+     8-11 vitesseContinuDebut
+     12-15 vitesseContinuFin
+     16-19 vitesseIpIDebut
+     20-23 vitesseIpIFin
+     24-27 penteAcceleration
+     28-32 tempsPose
+  */
+
+  
   int tailleMenu = 8;
-  char titreMenu[8][40] = {"Plage vitesse Continu", "plage image par image", "Nb pas moteur A", "Nb pas moteur B", "Pente acceleration", "nb pulse apres desc", "temps de pose", "retour <--"};
+  char titreMenu[8][40] = {"Plage vitesse Continu", "plage image par image", "Choix Vitesse",  "Pente acceleration", "Calibrage LED", "Reglage Capteur", "Seuil Declanchement", "retour <--"};
   Global * g;
   EntreeSortie * es;
   Keypad * k;
+  Moteur * m;
+  int ledMin;
+  int ledMax;
   
   int affichage_menu();
   void retourMenu();

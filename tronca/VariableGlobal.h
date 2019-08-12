@@ -58,6 +58,8 @@ class Global {
    int refreshVitesse = 0;
    int refreshLC = 0;
 
+   int ledMin = 300;
+   int ledMax = 750;
   
 // Fonction d'initialisation
 // Pin de la carte SD

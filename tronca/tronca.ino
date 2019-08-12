@@ -85,14 +85,15 @@ Global g(0);
 #include "EntreeSortie.h"
 EntreeSortie es(input, 12, led, 12, &g); ;
 
-#include "Menu.h"
-Menu m(&g, &es, &k);
-
 #include "Affichage.h"
 Affichage aff(&g, &es, &lc1, &lc2);
 
 #include "Moteur.h"
 Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_1, swa_2, swa_3, swa_4, swb_1, swb_2, swb_3, swb_4);
+
+
+#include "Menu.h"
+Menu m(&g, &es, &k, &monMoteur);
 
 void interuptStop() {
   Serial.println("Stop pressed interupt");
@@ -138,6 +139,11 @@ void setup()
   g.lcd1.print("Initialisation");
   aff.affichage_tout();
   pinMode(optoAnalogue,INPUT);
+  Serial.println("calibrage Led");
+  monMoteur.calibrage();
+  Serial.println("Resultat calibrage");
+  Serial.println(g.ledMin);
+  Serial.println(g.ledMax);
   
   
 }
