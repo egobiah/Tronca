@@ -1,5 +1,5 @@
 #include "Moteur.h"
-#define plafondBas g->ledMin+seuil
+#define plafondBas g->ledMin+g->seuil
 #define plafondMid (g->ledMax+g->ledMin)/2
 #define plafondHaut g->ledMax-40
 
@@ -204,8 +204,8 @@ void Moteur::intToSwitch(int pas, int sw) {
 }
 
 void Moteur::calibrage(){
-  int min = g->ledMin;
-  int max = g->ledMax;
+  int min = 1000;
+  int max = 0;
  
   intToSwitch(12800, 0);
   intToSwitch(25600, 1);
@@ -221,14 +221,14 @@ void Moteur::calibrage(){
     }
     a->intToLed(lecture,a->lc1);
      stepper.moveRelativeInSteps(1);
-    g->ledMin = min;
-    g->ledMax = max;
-    a->intToLed(g->ledMax,a->lc2);
-  a->lc2->setDigit(0,7,g->ledMin/100,0);
-  a->lc2->setDigit(0,6,(g->ledMin%100)/10,0);
-  a->lc2->setDigit(0,5,g->ledMin%10,0);
+
+    a->intToLed(max,a->lc2);
+  a->lc2->setDigit(0,7,min/100,0);
+  a->lc2->setDigit(0,6,(min%100)/10,0);
+  a->lc2->setDigit(0,5,min%10,0);
   }
-  
+  g->ledMax = max;
+  g-> ledMin = min;
 
   Serial.println("Reglage Capteur finis");
   Serial.println(g->ledMin);

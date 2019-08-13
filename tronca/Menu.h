@@ -11,6 +11,7 @@
 class Menu{
   private:
   RotaryEncoder encoder = RotaryEncoder(46, 47);
+  int dirSubMenu = 0;
   
   public:
   
@@ -27,8 +28,8 @@ class Menu{
   */
 
   
-  int tailleMenu = 8;
-  char titreMenu[8][40] = {"Plage vitesse Continu", "plage image par image", "Choix Vitesse",  "Pente acceleration", "Calibrage LED", "Reglage Capteur", "Seuil Declanchement", "retour <--"};
+  int tailleMenu = 10;
+  char titreMenu[10][40] = {"Plage vitesse Continu", "plage image par image",   "Seuil", "Calibrage LED", "Reglage Capteur", "Seuil", "Position Absolue", "Moteur Continu", "Moteur IpI", "Moteur callage"};
   Global * g;
   EntreeSortie * es;
   Keypad * k;
@@ -37,11 +38,14 @@ class Menu{
   int ledMax;
   
   int affichage_menu();
-  void retourMenu();
+  int retourMenu();
   void affichageMenuFromPos(int p);
   long saisieClavier(LiquidCrystal_I2C mylcd, int hauteur);
   int doubleMenu(int *a, int *b, String s1, String s2);
   int simpleMenu(int *a, String s);
+  int longSimpleMenu(long *a, String s);
+
+  int simpleEncodeur(int nbCboix, int choix[], int * valeur, String s);
 
   
 };

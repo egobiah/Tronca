@@ -103,6 +103,34 @@ int Global::get_config() {
     }
   }
   tempsPose = res;
+
+    res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(32+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  ledMin = res;
+
+    res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(36+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  ledMax = res;
+
+
+   res = 0;
+  for (int i = 0; i < 4; i++) {
+    eep = (EEPROM.read(40+i)) ;
+    for(int j = 7; j >= 0; j--){
+      res = (res << 1) + ((eep >> j)&1) ;
+    }
+  }
+  seuil = res;
   Serial.println("tempsPose");
   Serial.println(tempsPose);
 }
@@ -147,6 +175,18 @@ int Global::save_config() {
 
     for (int i = 0; i < 2; i++) {
     EEPROM.write( 31-i , (tempsPose >> (8 * i)) & 0xff);
+  }
+
+      for (int i = 0; i < 2; i++) {
+    EEPROM.write( 35-i , (ledMin >> (8 * i)) & 0xff);
+  }
+
+      for (int i = 0; i < 2; i++) {
+    EEPROM.write( 39-i , (ledMax >> (8 * i)) & 0xff);
+  }
+
+      for (int i = 0; i < 2; i++) {
+    EEPROM.write( 43-i , (seuil >> (8 * i)) & 0xff);
   }
   Serial.println("Sauvegardé");
 }

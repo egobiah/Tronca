@@ -15,8 +15,8 @@ class Global {
  LiquidCrystal_I2C lcd2 = LiquidCrystal_I2C(I2C_LCD2,16,2);
   // Variable sauvegardé
    int vitesseContinu = 5;
-   int vitesseContinuDebut =25;
-   int vitesseContinuFin = 255;
+   int vitesseContinuDebut =5;
+   int vitesseContinuFin = 10;
 
    int vitesseIpI = 1;
    int vitesseIpIDebut = 1;
@@ -25,11 +25,9 @@ class Global {
    int *vitesse[2] = {&vitesseIpI, &vitesseContinu};
 
    int nbPasMoteurA = 1;
-   int nbPasMoteurB = 1;
-   int penteAcceleration = 1;
    int tempsPose = 1;
 
-   long posAbsolue = 123456789;
+   long posAbsolue = 0;
    long posAbsolueOld = 1;
    long targetAbsolue = 0;
 
@@ -38,6 +36,20 @@ class Global {
    long targetRelatif = 0;
 
    int nbPulseDesc;
+   int penteAcceleration = 800;
+   
+   int pasMoteur = 12800;
+   long acceleration = 800;
+   long stepMoteurParSec = 12000;
+   int pasMoteurTab[6] = {400, 800, 1600, 3200, 6400, 12800};
+
+   int pasMoteurIpI = 0;
+   long stepMoteurParSecIpI = 0;
+   long accelerationIpI = 0;
+
+   int pasMoteurCallage = 0;
+   long stepMoteurParSecCallage = 0;
+   long accelerationCallage = 0;
 
   int stop = 0;
 
@@ -60,6 +72,8 @@ class Global {
 
    int ledMin = 300;
    int ledMax = 750;
+   
+   int seuil = 30;
   
 // Fonction d'initialisation
 // Pin de la carte SD
@@ -70,6 +84,7 @@ class Global {
    int save_config();
 
    int refresh = 0;
+
    
 };
 

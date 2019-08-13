@@ -29,7 +29,7 @@ class Moteur{
   FlexyStepper stepper;
   
   public:
-
+  
   Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, int pinDirMoteur, int pin_swa_1, int pin_swa_2, int pin_swa_3, int pin_swa_4, int pin_swb_1, int pin_swb_2, int pin_swb_3, int pin_swb_4);
   void pulseAvant();
   void pulseArriere();
@@ -49,7 +49,6 @@ class Moteur{
 
   void calibrage();
 
-  int seuil = 30;
   
 };
 

@@ -1,12 +1,12 @@
 #ifndef EntreeSortie_h
-#define EntreeSortie_h 
+#define EntreeSortie_h
 #include "VariableGlobal.h"
 #include <Arduino.h>
 #include <stdlib.h>
 
 
 
-class EntreeSortie{
+class EntreeSortie {
   private:
     // Tableau d'input
     int *input;
@@ -17,14 +17,14 @@ class EntreeSortie{
     int etatOld;
     int p1 = A8;
     int p2 = A9;
-    
+
 
   public:
     Global * g;
-    int etat;    
+    int etat;
     int changement;
-    // Fonction de declaration  
-   
+    // Fonction de declaration
+
     EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int tailleTabLed, Global * g1);
 
     //Remet a jour l'etat et le changement
@@ -46,7 +46,7 @@ class EntreeSortie{
     int testInter(int inter);
 
     // Renvoie 1 si l'interrupteur a changé d'état
-    int touchInter(int inter);  
+    int touchInter(int inter);
 
     int testEncodeur();
     int testOk();
@@ -60,8 +60,9 @@ class EntreeSortie{
     int touchAvant();
     void mapPottar(int potar, int debut, int fin, int * valeur);
     int ledOn(int nb_led);
-   int ledOff(int nb_led);
-     void gestionLed();
+    int ledOff(int nb_led);
+    void gestionLed();
+    void etteindreLed();
 };
 
 

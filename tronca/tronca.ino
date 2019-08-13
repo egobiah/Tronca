@@ -57,7 +57,7 @@ int input[12] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur};
 //
 
 int moteur = 13;
-int dirMoteur = 12;   
+int dirMoteur = 12;
 
 int swa_1 = A0;
 int swa_2 = A1;
@@ -76,6 +76,9 @@ int opto = 3;
 int opto2 = 18;
 int optoAnalogue = A14;
 int detecting_opto = 0;
+
+  int capteurLed  = A15;
+  
 #include "Keypad.h"
 Keypad k(0x20);
 
@@ -102,34 +105,34 @@ void interuptStop() {
 }
 
 
-void interuptOpto() 
-{ 
+void interuptOpto()
+{
   detachInterrupt(digitalPinToInterrupt(opto));
-  
-  
-  
-  
+
+
+
+
   Serial.println("Detect Opto");
- 
+
   g.posAbsolue += es.dirrection();
   g.posRelatif += es.dirrection();
   aff.affichage_lc();
   attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
- 
-  
-  
+
+
+
 }
 
-void interuptInteruptOpto(){
+void interuptInteruptOpto() {
   detachInterrupt(digitalPinToInterrupt(opto2));
-  attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, HIGH);
+  attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
   Serial.println("Detachage d'interupt");
 }
 
 void setup()
 {
   Serial.begin(9600); // initialise connexion série à 9600 bauds
-  pinMode(opto,INPUT_PULLUP);
+  pinMode(opto, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
   attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
   //attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
@@ -138,14 +141,14 @@ void setup()
   g.lcd_init();
   g.lcd1.print("Initialisation");
   aff.affichage_tout();
-  pinMode(optoAnalogue,INPUT);
+  pinMode(optoAnalogue, INPUT);
   Serial.println("calibrage Led");
-  monMoteur.calibrage();
+ // monMoteur.calibrage();
   Serial.println("Resultat calibrage");
   Serial.println(g.ledMin);
   Serial.println(g.ledMax);
-  
-  
+
+
 }
 
 
@@ -153,12 +156,12 @@ void setup()
 void loop()
 {
   es.tick();
-
+  
 
   if (g.posAbsolueOld != g.posAbsolue) {
     g.posAbsolueOld = g.posAbsolue;
     aff.affichage_absolue();
-    
+
   }
 
   if (g.posRelatifOld != g.posRelatif) {
@@ -167,108 +170,128 @@ void loop()
   }
 
   //Serial.println(analogRead(p2));
-
-  handling();
-
- // Serial.println(digitalRead(opto));
+  if(g.menu == 0){
+    es.gestionLed();
+    handling();
+  }
   
 
+  // Serial.println(digitalRead(opto));
+
+
   aff.affichageConditionnel();
+  if(m.affichage_menu() != 0){
+    aff.affichage_tout();
+  }
 
   if (g.stop != 0) {
     g.stop = 0;
-    delay(2000);
+    //delay(2000);
   }
 }
 
 
+
+
 void handling() {
-  //image Arriere
-  if (es.testBoutonPressed(5)) {
-    if (!es.testPulse()) {
-      monMoteur.imageArriere();
-    } else {
-      monMoteur.pulseArriere();
+  es.etteindreLed();
+  
+  if ( es.testInter(2) ) {
+    // B1
+    if (es.testBoutonPressed(5) ) {
+      // PULSE ARRIERE
+      Serial.println("Pulse Arriere");
     }
-  }
-  // image avant
-  if (es.testBoutonPressed(6)) {
-    if (!es.testPulse()) {
-      monMoteur.imageAvant();
-    } else {
-      monMoteur.pulseAvant();
+    // B2
+    if (es.testBoutonPressed(6)) {
+      // PULSE AVANT
+      Serial.println("Pulse Avant");
     }
-  }
-  // Arriere rapide
-  if (es.testBoutonPressed(7)) {
-    while (es.testInter(7)) {
-      es.tick();
-      if (!es.testPulse()) {
-        monMoteur.arriere();
-      } else {
-        monMoteur.pulseArriere();
+    // B3
+    if (es.testBoutonPressed(7) ) {
+      while (es.testBoutonReleased(7) == 0) {
+        es.tick();
+        Serial.println("Pulse Arriere");
       }
     }
 
-  }
-  // Avance Rapide
-  if (es.testBoutonPressed(8)) {
-    while (es.testInter(8)) {
-      es.tick();
-      if (!es.testPulse()) {
-        monMoteur.avant();
-      } else {
-        monMoteur.pulseAvant();
+    if (es.testBoutonPressed(8)) {
+      while (es.testBoutonReleased(8) == 0) {
+        es.tick();
+        // PULSE AVANT
+        Serial.println("Pulse AVANT");
       }
     }
-  }
-  // Bouton Go
-  if (es.testBoutonPressed(10) && g.ecritureClavier == 0) {
-    Serial.println("Go");
-    if ( es.dirrection() ) {
-      if (g.targetAbsolue == 0) {
+    // B6
+    if ( es.testBoutonPressed(10) & g.ecritureClavier == 0 ) {
+      while (g.stop != 0) {
         if (es.testAvant()) {
-          while (g.stop == 0) {
-            monMoteur.imageAvant();
-          }
+          // PULSE AVANT
+          Serial.println("Pulse Arriere");
         } else {
-          while (g.stop == 0) {
-            monMoteur.arriere();
-          }
+          // PULSE ARRIERE
+          Serial.println("Pulse Arriere");
         }
       }
-      monMoteur.goToAbsolue();
-      g.targetAbsolue = 0;
-
-    } else {
-      if (g.targetRelatif == 0) {
-        if (es.dirrection()) {
-          while (g.stop == 0) {
-            monMoteur.imageAvant();
-          }
-        } else {
-          while (g.stop == 0) {
-            monMoteur.arriere();
-          }
-        }
-      }
-      monMoteur.goToRelatif();
-      g.targetRelatif = 0;
     }
 
+
+    ////
+    ////
+    ////
+  } else {
+    // Mode pas pulse
+    // B1
+    if (es.testBoutonPressed(5) ) {
+      // IMAGE ARRIERE
+      Serial.println("IMAGE Arriere");
+    }
+    // B2
+    if (es.testBoutonPressed(6)) {
+      // IMAGE AVANT
+      Serial.println("IMAGE Avant");
+    }
+    // B3
+    if (es.testBoutonPressed(7) ) {
+      while (es.testBoutonReleased(7) == 0) {
+        // RECULE
+        es.tick();
+        Serial.println("Recule");
+
+      }
+      // IMAGE ARRIERE
+      
+      Serial.println("IMAGE Arriere");
+    }
+
+    if (es.testBoutonPressed(8)) {
+      while (es.testBoutonReleased(8) == 0) {
+        es.tick();
+        // AVANCE
+        Serial.println("Avance");
+      }
+      //IMAGE ARRIERE
+      Serial.println("Une image avant");
+    }
+    // B6
+    if ( es.testBoutonPressed(10) & g.ecritureClavier == 0 ) {
+
+      // Absolue
+      if (es.testAbsolue()) {
+        // GO TO ABSOLUE TARGET
+        Serial.println("GO TO ABSOLUE TARGET");
+
+      } else {
+        // GO TO RELATIF POSITION
+        Serial.println("Go to relatif target");
+
+      }
+    }
   }
 
-  if (es.touchContinu()) {
-    g.refreshVitesse = 1;
-    aff.affichage_vitesse();
-    Serial.println("Continu touch");
-  }
+   
 
-  if (es.touchAvant()) {
-    Serial.print("Avant");
-    g.refresh = 1;
 
-  }
   g.codeK = g.tamponK;
   g.tamponK = k.get_key();
 
@@ -297,8 +320,9 @@ void handling() {
 
   if (g.tamponK == -1 && g.codeK == '*' && g.ecritureClavier == 0 ) {
     g.save_config();
+    Serial.println("Saving config");
   }
+ es.gestionLed();
 
-  m.affichage_menu();
 
 }

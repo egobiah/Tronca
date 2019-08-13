@@ -38,7 +38,7 @@ void EntreeSortie::tick(){
   detect_input();
   mapPottar(p1,g->vitesseContinuDebut, g->vitesseContinuFin, &(g->vitesseContinu));
   mapPottar(p2,g->vitesseIpIDebut, g->vitesseIpIFin, &(g->vitesseIpI));
-  gestionLed();
+  
 }
 
 //Remet a jour l'etat
@@ -146,7 +146,7 @@ int EntreeSortie::ledOff(int nb_led){
 
  void EntreeSortie::gestionLed(){
 
-  if(changement != 0){
+ 
     for(int i = 0; i < 10; i++){
       ledOff(led[i]);
     }
@@ -196,12 +196,12 @@ int EntreeSortie::ledOff(int nb_led){
           // Led inter 4 ; led 8 et 9
      if(testAbsolue()){
         ledOn(led[8]);
-        ledOff(led[9]);
+        ledOff(led[9]); 
      } else {
         ledOff(led[8]);
         ledOn(led[9]);
      }
-  }
+  
  }
 
 void EntreeSortie::mapPottar(int potar, int debut, int fin, int * valeur){
@@ -221,5 +221,11 @@ int EntreeSortie::dirrection(){
     return 1;  
   } else {
     return -1;
+  }
+}
+
+void EntreeSortie::etteindreLed(){
+  for(int i = 0; i < 10; i++){
+    ledOff(led[i]);
   }
 }

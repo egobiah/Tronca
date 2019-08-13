@@ -18,7 +18,7 @@ void setup() {
   // put your setup code here, to run once:
   pinMode(opto, INPUT);
   pinMode(b5, INPUT);
-  pinMode(A14, INPUT);
+  pinMode(A15, INPUT);
   Serial.begin(9600);
   attachInterrupt(digitalPinToInterrupt(b5), interuptTest, RISING);
   attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
@@ -29,6 +29,6 @@ void setup() {
 void loop() {
   
   // put your main code here, to run repeatedly:
-  Serial.println(analogRead(A14));
+  Serial.println(digitalRead(A15));
   delay(200);
 }
