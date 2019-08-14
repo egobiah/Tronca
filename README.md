@@ -1,12 +1,6 @@
-# Tronca
+﻿# Tronca
 Machine Arduino
 
-WIP
+Projet finis
 
-TODO :
-
-Programme de calibrage de la led
-
-Différentes vitesses 
-
-Refaire Etat 
+Manque les commentaires pour la lisibilité
