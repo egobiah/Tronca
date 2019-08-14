@@ -185,7 +185,7 @@ int EntreeSortie::ledOff(int nb_led){
      }
   
        // Led inter 4 ; led 6 et 7
-     if(testAvant()){
+     if(testInter(3)){
         ledOn(led[6]);
         ledOff(led[7]);
      } else {
@@ -217,7 +217,8 @@ void EntreeSortie::mapPottar(int potar, int debut, int fin, int * valeur){
 }
 
 int EntreeSortie::dirrection(){
-  if(testAvant()){
+  
+  if((testInter(3) && !(g->backwarding) ) || ( (!testInter(3)) &&  !(g->backwarding) )){
     return 1;  
   } else {
     return -1;

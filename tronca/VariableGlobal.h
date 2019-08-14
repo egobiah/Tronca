@@ -35,21 +35,26 @@ class Global {
    long posRelatifOld = 1;
    long targetRelatif = 0;
 
+   long target = 0;
+
    int nbPulseDesc;
    int penteAcceleration = 800;
    
-   int pasMoteur = 12800;
-   long acceleration = 800;
-   long stepMoteurParSec = 12000;
    int pasMoteurTab[6] = {400, 800, 1600, 3200, 6400, 12800};
+   
+   int pasMoteur = 400;
+   long acceleration = 800;
+   long stepMoteurParSec = 3200;
+   int pasParBoucle = 80;
+   
 
-   int pasMoteurIpI = 0;
-   long stepMoteurParSecIpI = 0;
-   long accelerationIpI = 0;
+   int pasMoteurIpI = 400;
+   long stepMoteurParSecIpI = 1600;
+   long accelerationIpI = 800;
 
-   int pasMoteurCallage = 0;
-   long stepMoteurParSecCallage = 0;
-   long accelerationCallage = 0;
+   int pasMoteurCallage = 12800;
+   long stepMoteurParSecCallage = 200;
+   long accelerationCallage = 800;
 
   int stop = 0;
 
@@ -84,6 +89,8 @@ class Global {
    int save_config();
 
    int refresh = 0;
+
+   int backwarding = 0;
 
    
 };

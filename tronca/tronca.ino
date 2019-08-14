@@ -77,8 +77,8 @@ int opto2 = 18;
 int optoAnalogue = A14;
 int detecting_opto = 0;
 
-  int capteurLed  = A15;
-  
+int capteurLed  = A15;
+
 #include "Keypad.h"
 Keypad k(0x20);
 
@@ -101,7 +101,11 @@ Menu m(&g, &es, &k, &monMoteur);
 void interuptStop() {
   Serial.println("Stop pressed interupt");
   g.stop = 1;
+  noInterrupts();
+  monMoteur.stepper.stop = 1;
+  //monMoteur.stepper.moveRelativeInSteps(0);
 
+  interrupts();
 }
 
 
@@ -115,6 +119,9 @@ void interuptOpto()
   Serial.println("Detect Opto");
 
   g.posAbsolue += es.dirrection();
+   if(g.posAbsolue < 0){
+      g.posAbsolue = 0;
+    }
   g.posRelatif += es.dirrection();
   aff.affichage_lc();
   attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
@@ -143,7 +150,7 @@ void setup()
   aff.affichage_tout();
   pinMode(optoAnalogue, INPUT);
   Serial.println("calibrage Led");
- // monMoteur.calibrage();
+  // monMoteur.calibrage();
   Serial.println("Resultat calibrage");
   Serial.println(g.ledMin);
   Serial.println(g.ledMax);
@@ -156,9 +163,13 @@ void setup()
 void loop()
 {
   es.tick();
-  
+ if(es.touchInter(3)){
+  aff.affichage_relatif();
+ }
+
 
   if (g.posAbsolueOld != g.posAbsolue) {
+   
     g.posAbsolueOld = g.posAbsolue;
     aff.affichage_absolue();
 
@@ -170,17 +181,17 @@ void loop()
   }
 
   //Serial.println(analogRead(p2));
-  if(g.menu == 0){
+  if (g.menu == 0) {
     es.gestionLed();
     handling();
   }
-  
+
 
   // Serial.println(digitalRead(opto));
 
 
   aff.affichageConditionnel();
-  if(m.affichage_menu() != 0){
+  if (m.affichage_menu() != 0) {
     aff.affichage_tout();
   }
 
@@ -195,41 +206,48 @@ void loop()
 
 void handling() {
   es.etteindreLed();
-  
+
   if ( es.testInter(2) ) {
     // B1
     if (es.testBoutonPressed(5) ) {
       // PULSE ARRIERE
+      monMoteur.pulseArriere();
       Serial.println("Pulse Arriere");
     }
     // B2
     if (es.testBoutonPressed(6)) {
       // PULSE AVANT
       Serial.println("Pulse Avant");
+      monMoteur.pulseAvant();
     }
     // B3
     if (es.testBoutonPressed(7) ) {
-      while (es.testBoutonReleased(7) == 0) {
+      while (es.testBoutonReleased(7) == 0 && g.stop == 0) {
         es.tick();
+        monMoteur.pulseArriere();
         Serial.println("Pulse Arriere");
       }
     }
 
     if (es.testBoutonPressed(8)) {
-      while (es.testBoutonReleased(8) == 0) {
+      while (es.testBoutonReleased(8) == 0 && g.stop == 0) {
         es.tick();
         // PULSE AVANT
+        monMoteur.pulseAvant();
         Serial.println("Pulse AVANT");
       }
     }
     // B6
     if ( es.testBoutonPressed(10) & g.ecritureClavier == 0 ) {
       while (g.stop != 0) {
+        es.tick();
         if (es.testAvant()) {
           // PULSE AVANT
           Serial.println("Pulse Arriere");
+          monMoteur.pulseAvant();
         } else {
           // PULSE ARRIERE
+          monMoteur.pulseArriere();
           Serial.println("Pulse Arriere");
         }
       }
@@ -245,51 +263,96 @@ void handling() {
     if (es.testBoutonPressed(5) ) {
       // IMAGE ARRIERE
       Serial.println("IMAGE Arriere");
+      monMoteur.imageArriere();
     }
     // B2
     if (es.testBoutonPressed(6)) {
       // IMAGE AVANT
+      monMoteur.imageAvant();
       Serial.println("IMAGE Avant");
     }
     // B3
     if (es.testBoutonPressed(7) ) {
-      while (es.testBoutonReleased(7) == 0) {
+      while (es.testBoutonReleased(7) == 0 && g.stop == 0) {
         // RECULE
         es.tick();
+        monMoteur.arriere();
         Serial.println("Recule");
 
       }
       // IMAGE ARRIERE
-      
+      monMoteur.imageArriere();
+
       Serial.println("IMAGE Arriere");
     }
 
     if (es.testBoutonPressed(8)) {
-      while (es.testBoutonReleased(8) == 0) {
+      while (es.testBoutonReleased(8) == 0 && g.stop == 0) {
         es.tick();
         // AVANCE
+        monMoteur.avant();
         Serial.println("Avance");
       }
-      //IMAGE ARRIERE
+      //IMAGE AVANCE
       Serial.println("Une image avant");
+      monMoteur.imageAvant();
     }
     // B6
-    if ( es.testBoutonPressed(10) & g.ecritureClavier == 0 ) {
-
+    if ( es.testBoutonPressed(10) & g.ecritureClavier == -0 ) {
+      Serial.println("Go");
       // Absolue
-      if (es.testAbsolue()) {
-        // GO TO ABSOLUE TARGET
-        Serial.println("GO TO ABSOLUE TARGET");
-
+      
+      if (es.testAbsolue() ) {
+        g.target = g.targetAbsolue - g.posAbsolue + g.posRelatif;
       } else {
-        // GO TO RELATIF POSITION
-        Serial.println("Go to relatif target");
-
+        if (!es.testAvant()) {
+        g.target = g.posRelatif - g.targetRelatif;
+        } else {
+         g.target = g.posRelatif + g.targetRelatif;
+        }
       }
+      
+    
+   Serial.println("Target");
+      Serial.println(g.target);
+      while ( (g.posRelatif - g.target != 0)  && g.stop == 0) {
+        Serial.println(g.posRelatif - g.target );
+        if (es.testContinu()) {
+          // En continu
+          es.tick();
+          if (g.posRelatif - g.target < 0) {
+            monMoteur.configContinu();
+          
+            monMoteur.stepper.moveRelativeInSteps( (g.posRelatif - g.target - 1) * g.pasMoteur / 8 );
+            monMoteur.avant();
+          } else {
+            monMoteur.configContinu();
+            g.backwarding = 1;
+            monMoteur.stepper.moveRelativeInSteps( (g.posRelatif - (g.target) - 1) * g.pasMoteur / 8 );
+            g.backwarding = 0;
+            monMoteur.arriere();
+          }
+        } else {
+          // En image par image
+          if (g.posRelatif - g.target < 0) {
+            monMoteur.imageAvant();
+          } else {
+            monMoteur.imageArriere();
+          }
+        }
+      }
+      g.targetRelatif = 0;
+      g.targetAbsolue = 0;
+
+      // GO TO ABSOLUE TARGET
+
+    aff.affichage_tout();
+
     }
   }
 
-   
+
+
 
 
   g.codeK = g.tamponK;
@@ -304,12 +367,18 @@ void handling() {
       g.lcd1.setCursor(0, 1);
       g.lcd1.print("Attente saisie        ");
       tmpA = m.saisieClavier(g.lcd1, 1);
+      if(tmpA == -1){
+        g.targetAbsolue = 0;
+      }
       g.targetAbsolue = tmpA;
     } else {
       Serial.println("Relatif");
       g.lcd2.setCursor(0, 1);
       g.lcd2.print("Attente saisie        ");
       tmpA = m.saisieClavier(g.lcd2, 1);
+       if(tmpA == -1){
+        g.targetRelatif = 0;
+      }
       g.targetRelatif = tmpA;
     }
     Serial.println(tmpA);
@@ -322,7 +391,7 @@ void handling() {
     g.save_config();
     Serial.println("Saving config");
   }
- es.gestionLed();
+  es.gestionLed();
 
 
 }

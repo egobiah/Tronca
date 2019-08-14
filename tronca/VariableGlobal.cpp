@@ -84,16 +84,7 @@ int Global::get_config() {
   Serial.println(vitesseIpIFin);
 
 
-  res = 0;
-  for (int i = 0; i < 4; i++) {
-    eep = (EEPROM.read(24+i)) ;
-    for(int j = 7; j >= 0; j--){
-      res = (res << 1) + ((eep >> j)&1) ;
-    }
-  }
-  penteAcceleration = res;
-  Serial.println("penteAcceleration");
-  Serial.println(penteAcceleration);
+ 
 
   res = 0;
   for (int i = 0; i < 4; i++) {
@@ -102,7 +93,9 @@ int Global::get_config() {
       res = (res << 1) + ((eep >> j)&1) ;
     }
   }
-  tempsPose = res;
+  tempsPose = res;  
+  Serial.println("tempsPose");
+  Serial.println(tempsPose);
 
     res = 0;
   for (int i = 0; i < 4; i++) {
@@ -112,7 +105,8 @@ int Global::get_config() {
     }
   }
   ledMin = res;
-
+    Serial.println("ledMin");
+  Serial.println(ledMin);
     res = 0;
   for (int i = 0; i < 4; i++) {
     eep = (EEPROM.read(36+i)) ;
@@ -122,6 +116,8 @@ int Global::get_config() {
   }
   ledMax = res;
 
+    Serial.println("ledMax");
+  Serial.println(ledMax);
 
    res = 0;
   for (int i = 0; i < 4; i++) {
@@ -131,8 +127,8 @@ int Global::get_config() {
     }
   }
   seuil = res;
-  Serial.println("tempsPose");
-  Serial.println(tempsPose);
+  Serial.println("Seuil");
+  Serial.println(seuil);
 }
 
 
@@ -169,9 +165,7 @@ int Global::save_config() {
     EEPROM.write( 23-i , (vitesseIpIFin >> (8 * i)) & 0xff);
   }
 
-    for (int i = 0; i < 2; i++) {
-    EEPROM.write( 27-i, (penteAcceleration >> (8 * i)) & 0xff);
-  }
+
 
     for (int i = 0; i < 2; i++) {
     EEPROM.write( 31-i , (tempsPose >> (8 * i)) & 0xff);

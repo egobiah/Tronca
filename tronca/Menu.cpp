@@ -311,9 +311,9 @@ int Menu::affichage_menu() {
         res = doubleMenu(&g->ledMin, &g->ledMax, "Valeur Min", "Valeur Max");
         break;
 
-      // Temps de pose
+      // Seuil
       case 5:
-        res = simpleMenu(&g->seuil, "Val au dessus de ledMin");
+        res = simpleMenu(&g->seuil, "Seuil");
         break;
       // ¨Position Absolue
       case 6:
@@ -340,11 +340,15 @@ int Menu::affichage_menu() {
         valRetour = longSimpleMenu(&g->acceleration, "Acceleration");
         if (valRetour == -1) {
           return -1;
-        }
+        } 
+        res += valRetour;
+        // NB pas / boucle
+        valRetour = simpleMenu(&g->pasParBoucle, "Pas par boucle");
         if (valRetour == -1) {
           return -1;
-        }
+        } 
         res += valRetour;
+        
 
         break;
       // Retour

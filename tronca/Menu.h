@@ -29,7 +29,7 @@ class Menu{
 
   
   int tailleMenu = 10;
-  char titreMenu[10][40] = {"Plage vitesse Continu", "plage image par image",   "Seuil", "Calibrage LED", "Reglage Capteur", "Seuil", "Position Absolue", "Moteur Continu", "Moteur IpI", "Moteur callage"};
+  char titreMenu[10][40] = {"Plage vitesse Continu", "plage image par image",   "Temps Pose", "Calibrage LED", "Reglage Capteur", "Seuil", "Position Absolue", "Moteur Continu", "Moteur IpI", "Moteur callage"};
   Global * g;
   EntreeSortie * es;
   Keypad * k;
