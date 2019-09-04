@@ -56,6 +56,8 @@ class Global {
    long stepMoteurParSecCallage = 200;
    long accelerationCallage = 800;
 
+   int delayApresPose = 100;
+
   int stop = 0;
 
   

@@ -341,6 +341,12 @@ int Menu::affichage_menu() {
           return -1;
         } 
         res += valRetour;
+
+            case 8:
+              Serial.println("Passé par la");
+              res = simpleMenu(&g->delayApresPose, "Delai en ms");
+            break;
+
         
 
         break;
@@ -400,7 +406,7 @@ int Menu::affichage_menu() {
             }
             res += valRetour;
             break;
-
+        
         }
     }
 

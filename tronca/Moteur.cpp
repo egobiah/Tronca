@@ -45,6 +45,7 @@ void Moteur::photos() {
       Serial.println("photos");
       delay(g->tempsPose);
       digitalWrite(camera, LOW);
+      delay(g->delayApresPose);
   }
 }
 
@@ -77,10 +78,10 @@ void Moteur::imageAvant() {
   int i = 0;
   int j = 0;
   Serial.println("Une image Avant");
-
-  stepper.moveRelativeInSteps(-(g->pasMoteurIpI/18));
+// MODIFICATION ICI
+  //stepper.moveRelativeInSteps(-(g->pasMoteurIpI/20));
   int tour = 0;
-  while (!((i == 1 && analogRead(capteurLed ) < plafondMid) ) && g->stop == 0) {
+  while (!((i == 1 && analogRead(capteurLed ) < plafondMid+100) ) && g->stop == 0) {
 
     stepper.moveRelativeInSteps(-2);
     if (analogRead(capteurLed ) > plafondHaut && i == 0) {
@@ -129,9 +130,10 @@ void Moteur::imageArriere() {
   int i = 0;
   int j = 0;
   Serial.println("Une image Arriere");
-stepper.moveRelativeInSteps((g->pasMoteurIpI/18));
+  // MODIFICATION ICI
+//stepper.moveRelativeInSteps((g->pasMoteurIpI/20));
   int tour = 0;
-  while (!((i == 1 && analogRead(capteurLed ) < plafondMid) ) && g->stop == 0) {
+  while (!((i == 1 && analogRead(capteurLed ) < plafondMid+100) ) && g->stop == 0) {
 
 
 

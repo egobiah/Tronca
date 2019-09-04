@@ -22,9 +22,10 @@ void Affichage::affichage_absolue(){
   if(g->menu == 0){
     g->lcd1.clear();
     g->lcd1.setCursor(0,0);
-    g->lcd1.print("@");
+    g->lcd1.print("Absolue ");
     g->lcd1.print(g->posAbsolue);
     g->lcd1.setCursor(0,1);
+    g->lcd1.print("Saisie ");
     g->lcd1.print(g->targetAbsolue);
   }
   intToLed(g->posAbsolue,lc1);
@@ -56,7 +57,7 @@ void Affichage::affichage_relatif(){
   
   g->lcd2.clear();
   g->lcd2.setCursor(0,0);
-  g->lcd2.print("R");
+  g->lcd2.print("Relatif ");
   g->lcd2.print(g->posRelatif);
   intToLed(g->posRelatif,lc2);
   
@@ -66,14 +67,15 @@ void Affichage::affichage_relatif(){
   
 
   //affichage_vitesse();
+ 
   g->lcd2.setCursor(0,1);
-  g->lcd2.setCursor(0,1);
+  g->lcd2.print("Saisie ");
   if(!es->testInter(3)){
     g->lcd2.print("-");
   } else {
     g->lcd2.print("+");
   }
-  g->lcd2.setCursor(1,1);
+  
   g->lcd2.print(g->targetRelatif);
   g->refreshRelatif = 0;
 }

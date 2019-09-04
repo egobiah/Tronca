@@ -28,8 +28,8 @@ class Menu{
   */
 
   
-  int tailleMenu = 8;
-  char titreMenu[8][40] = {   "Temps Pose", "Calibrage LED", "Reglage Capteur", "Seuil", "Position Absolue", "Moteur Continu", "Moteur IpI", "Moteur callage"};
+  int tailleMenu = 9;
+  char titreMenu[9][40] = {   "Temps Pose", "Calibrage LED", "Reglage Capteur", "Seuil", "Position Absolue", "Moteur Continu", "Moteur IpI", "Moteur callage", "Delai apres cap"};
   Global * g;
   EntreeSortie * es;
   Keypad * k;

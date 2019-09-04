@@ -51,8 +51,7 @@ int b7 = 19;
 int p1 = A8;
 int p2 = A9;
 // Jack
-int vert = 11;
-int rouge = 12;
+
 int led[12] = {i1T, i1B, i2T, i2B, i3T, i3B, i4T, i4B, i5T, i5B};
 int input[13] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur, b7};
 //
@@ -60,22 +59,22 @@ int input[13] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur, b7};
 int moteur = 13;
 int dirMoteur = 12;
 
-int swa_1 = A0;
-int swa_2 = A1;
-int swa_3 = A2;
-int swa_4 = A3;
+int swa_5 = A0; //5
+int swa_6 = A1; //6
+int swa_7 = A2;  //
+int swa_8 = A3;
 
-int swb_1 = A4;
-int swb_2 = A5;
-int swb_3 = A6;
-int swb_4 = A7;
+int swb_5 = A4;
+int swb_6 = A5;
+int swb_7 = A6;
+int swb_8 = A7;
 
 int tmpA;
 int tmpB;
 
 int opto = 3;
 int opto2 = 18;
-int optoAnalogue = A14;
+
 int detecting_opto = 0;
 
 int capteurLed  = A15;
@@ -95,7 +94,7 @@ EntreeSortie es(input, 13, led, 12, &g); ;
 Affichage aff(&g, &es, &lc1, &lc2);
 
 #include "Moteur.h"
-Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_1, swa_2, swa_3, swa_4, swb_1, swb_2, swb_3, swb_4, camera);
+Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_5, swa_6, swa_7, swa_8, swb_5, swb_6, swb_7, swb_8, camera);
 
 
 #include "Menu.h"
@@ -160,7 +159,7 @@ void setup()
   g.lcd_init();
   g.lcd1.print("Initialisation");
   aff.affichage_tout();
-  pinMode(optoAnalogue, INPUT);
+  
   Serial.println("calibrage Led");
   // monMoteur.calibrage();
   Serial.println("Resultat calibrage");
