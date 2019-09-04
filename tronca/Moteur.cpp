@@ -39,12 +39,12 @@ Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, i
 
 void Moteur::pulseAvant() {
   configContinu();
-  stepper.moveRelativeInSteps(-2);
+  stepper.moveRelativeInSteps(1);
 }
 
 void Moteur::avant() {
   configContinu();
-  stepper.moveRelativeInSteps(-g->pasParBoucle);
+  stepper.moveRelativeInSteps(g->pasParBoucle);
 }
 
 void Moteur::callageAvant() {
@@ -52,10 +52,10 @@ void Moteur::callageAvant() {
   Serial.println("Callage");
   intToSwitch(12800, 0);
   intToSwitch(25600, 1);
-  stepper.setSpeedInStepsPerSecond(-200);
+  stepper.setSpeedInStepsPerSecond(200);
 
   while  (analogRead(capteurLed ) >= plafondBas && g->stop == 0) {
-    stepper.moveRelativeInSteps(-1);
+    stepper.moveRelativeInSteps(1);
   }
 
 
@@ -68,11 +68,10 @@ void Moteur::imageAvant() {
   int j = 0;
   Serial.println("Une image Avant");
 
-  stepper.moveRelativeInSteps(-(g->pasMoteurIpI/12));
   int tour = 0;
   while (!((i == 1 && analogRead(capteurLed ) < plafondMid) ) && g->stop == 0) {
 
-    stepper.moveRelativeInSteps(-2);
+    stepper.moveRelativeInSteps(1);
     if (analogRead(capteurLed ) > plafondHaut && i == 0) {
       i = 1;
     }
