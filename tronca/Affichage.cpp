@@ -65,7 +65,7 @@ void Affichage::affichage_relatif(){
 
   
 
-  affichage_vitesse();
+  //affichage_vitesse();
   g->lcd2.setCursor(0,1);
   g->lcd2.setCursor(0,1);
   if(!es->testInter(3)){
@@ -114,7 +114,7 @@ void Affichage::affichageConditionnel(){
   }
 
   if(g->refreshVitesse){
-    affichage_vitesse();
+    //affichage_vitesse();
     g->refreshVitesse = 0;
   }
 

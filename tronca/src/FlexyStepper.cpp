@@ -793,6 +793,7 @@ void FlexyStepper::moveRelativeInSteps(long distanceToMoveInSteps)
   while(!processMovement() && stop == 0)
     ;
 
+
 	stop = 0;
 }
 

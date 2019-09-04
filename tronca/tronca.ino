@@ -46,6 +46,7 @@ int b2 = 23;
 int b3 = 24;
 int b4 = 25;
 int b6 = 26;
+int b7 = 19;
 // Potar
 int p1 = A8;
 int p2 = A9;
@@ -53,7 +54,7 @@ int p2 = A9;
 int vert = 11;
 int rouge = 12;
 int led[12] = {i1T, i1B, i2T, i2B, i3T, i3B, i4T, i4B, i5T, i5B};
-int input[12] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur};
+int input[13] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur, b7};
 //
 
 int moteur = 13;
@@ -79,6 +80,8 @@ int detecting_opto = 0;
 
 int capteurLed  = A15;
 
+int camera = 27;
+
 #include "Keypad.h"
 Keypad k(0x20);
 
@@ -86,13 +89,13 @@ Keypad k(0x20);
 Global g(0);
 
 #include "EntreeSortie.h"
-EntreeSortie es(input, 12, led, 12, &g); ;
+EntreeSortie es(input, 13, led, 12, &g); ;
 
 #include "Affichage.h"
 Affichage aff(&g, &es, &lc1, &lc2);
 
 #include "Moteur.h"
-Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_1, swa_2, swa_3, swa_4, swb_1, swb_2, swb_3, swb_4);
+Moteur monMoteur(&g, &aff, &es, moteur, dirMoteur, swa_1, swa_2, swa_3, swa_4, swb_1, swb_2, swb_3, swb_4, camera);
 
 
 #include "Menu.h"
@@ -103,11 +106,18 @@ void interuptStop() {
   g.stop = 1;
   noInterrupts();
   monMoteur.stepper.stop = 1;
-  //monMoteur.stepper.moveRelativeInSteps(0);
+ // monMoteur.stepper.moveRelativeInSteps(0);
 
   interrupts();
 }
 
+void interuptResetRelatif(){
+    noInterrupts();
+    g.posRelatif = 0;
+    Serial.println("Reset Relatif");
+    aff.intToLed(g.posRelatif,aff.lc2);
+    interrupts();
+}
 
 void interuptOpto()
 {
@@ -142,6 +152,8 @@ void setup()
   pinMode(opto, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
   attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
+  //attachInterrupt(digitalPinToInterrupt(b7), interuptResetRelatif, RISING);
+  
   //attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
   Serial.println("Ok, c'est parti");
   g.get_config();
@@ -206,7 +218,7 @@ void loop()
 
 void handling() {
   es.etteindreLed();
-
+  
   if ( es.testInter(2) ) {
     // B1
     if (es.testBoutonPressed(5) ) {
@@ -311,11 +323,19 @@ void handling() {
          g.target = g.posRelatif + g.targetRelatif;
         }
       }
-      
+
+    
+    if(g.target == g.posRelatif){
+      g.target = 30000;
+      Serial.println("ZERO");
+      if(!es.testAvant()){
+        g.target = -g.target;
+      }
+    }
     
    Serial.println("Target");
       Serial.println(g.target);
-      while ( (g.posRelatif - g.target != 0)  && g.stop == 0) {
+      while ( ( (g.posRelatif - g.target != 0)  )  && g.stop == 0) {
         Serial.println(g.posRelatif - g.target );
         if (es.testContinu()) {
           // En continu
@@ -323,12 +343,12 @@ void handling() {
           if (g.posRelatif - g.target < 0) {
             monMoteur.configContinu();
           
-            monMoteur.stepper.moveRelativeInSteps( (g.posRelatif - g.target - 1) * g.pasMoteur / 8 );
+            monMoteur.stepper.moveRelativeInSteps( (g.posRelatif - g.target - 1) * g.pasMoteur / 16 );
             monMoteur.avant();
           } else {
             monMoteur.configContinu();
             g.backwarding = 1;
-            monMoteur.stepper.moveRelativeInSteps( (g.posRelatif - (g.target) - 1) * g.pasMoteur / 8 );
+            monMoteur.stepper.moveRelativeInSteps( (g.posRelatif - (g.target) - 1) * g.pasMoteur / 16 );
             g.backwarding = 0;
             monMoteur.arriere();
           }
@@ -390,6 +410,12 @@ void handling() {
   if (g.tamponK == -1 && g.codeK == '*' && g.ecritureClavier == 0 ) {
     g.save_config();
     Serial.println("Saving config");
+    for(int i = 0; i <= 5; i++){
+    es.gestionLed();
+    delay(200);
+    es.etteindreLed();
+    delay(200);
+    }
   }
   es.gestionLed();
 

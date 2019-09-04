@@ -11,7 +11,7 @@ class Moteur {
   private:
     int moteur = 0;
     int dirMoteur = 0;
-
+    
     int swa_1 = 0;
     int swa_2 = 0;
     int swa_3 = 0;
@@ -26,11 +26,13 @@ class Moteur {
     Global * g;
     Affichage * a;
     EntreeSortie * es;
+
+    int camera;
     
 
   public:
     FlexyStepper stepper;
-    Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, int pinDirMoteur, int pin_swa_1, int pin_swa_2, int pin_swa_3, int pin_swa_4, int pin_swb_1, int pin_swb_2, int pin_swb_3, int pin_swb_4);
+    Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, int pinDirMoteur, int pin_swa_1, int pin_swa_2, int pin_swa_3, int pin_swa_4, int pin_swb_1, int pin_swb_2, int pin_swb_3, int pin_swb_4, int pinCamera);
     void pulseAvant();
     void pulseArriere();
 

@@ -3,13 +3,13 @@
 #define plafondMid (g->ledMax+g->ledMin)/2
 #define plafondHaut g->ledMax-40
 
-Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, int pinDirMoteur, int pin_swa_1, int pin_swa_2, int pin_swa_3, int pin_swa_4,  int pin_swb_1, int pin_swb_2, int pin_swb_3, int pin_swb_4) {
+Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, int pinDirMoteur, int pin_swa_1, int pin_swa_2, int pin_swa_3, int pin_swa_4,  int pin_swb_1, int pin_swb_2, int pin_swb_3, int pin_swb_4, int pinCamera) {
   g = g1;
   a = a1;
   moteur = pinMoteur;
   dirMoteur = pinDirMoteur;
   es = es1;
-
+  camera = pinCamera;
   swa_1 = pin_swa_1;
   swa_2 = pin_swa_2;
   swa_3 = pin_swa_3;
@@ -30,11 +30,22 @@ Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, i
   pinMode(pin_swb_3 , OUTPUT);
   pinMode( pin_swb_4, OUTPUT);
 
+  pinMode(camera, OUTPUT);
+  //digitalWrite(camera, LOW);
 
 
   stepper.connectToPins(moteur, dirMoteur);
   stepper.setAccelerationInStepsPerSecondPerSecond(800);   //acceleration
   stepper.setSpeedInStepsPerSecond(12800);
+}
+void Moteur::photos() {
+  if (!es->testContinu() && es->testCamera() && g->stop == 0 ){
+      // FONCTION PRENDRE PHOTOS
+      digitalWrite(camera,HIGH);
+      Serial.println("photos");
+      delay(g->tempsPose);
+      digitalWrite(camera, LOW);
+  }
 }
 
 void Moteur::pulseAvant() {
@@ -50,12 +61,11 @@ void Moteur::avant() {
 void Moteur::callageAvant() {
   configCallage();
   Serial.println("Callage");
-  intToSwitch(12800, 0);
-  intToSwitch(25600, 1);
+ 
   stepper.setSpeedInStepsPerSecond(-200);
 
   while  (analogRead(capteurLed ) >= plafondBas && g->stop == 0) {
-    stepper.moveRelativeInSteps(-1);
+    stepper.moveRelativeInSteps(-2);
   }
 
 
@@ -68,7 +78,7 @@ void Moteur::imageAvant() {
   int j = 0;
   Serial.println("Une image Avant");
 
-  stepper.moveRelativeInSteps(-(g->pasMoteurIpI/12));
+  stepper.moveRelativeInSteps(-(g->pasMoteurIpI/18));
   int tour = 0;
   while (!((i == 1 && analogRead(capteurLed ) < plafondMid) ) && g->stop == 0) {
 
@@ -79,6 +89,7 @@ void Moteur::imageAvant() {
   }
   callageAvant();
   es->tick();
+  Serial.println("ici photos");
   photos();
   a->affichage_tout();
 }
@@ -86,14 +97,14 @@ void Moteur::imageAvant() {
 void Moteur::pulseArriere() {
   g->backwarding = 1;
   configContinu();
-  stepper.moveRelativeInSteps(-2);
+  stepper.moveRelativeInSteps(1);
   g->backwarding = 0;
 }
 
 void Moteur::arriere() {
   g->backwarding = 1;
   configContinu();
-  stepper.moveRelativeInSteps(-g->pasParBoucle);
+  stepper.moveRelativeInSteps(g->pasParBoucle);
   g->backwarding = 0;
 }
 
@@ -101,12 +112,11 @@ void Moteur::callageArriere() {
   g->backwarding = 1;
   configCallage();
   Serial.println("Callage");
-  intToSwitch(12800, 0);
-  intToSwitch(25600, 1);
+  
   stepper.setSpeedInStepsPerSecond(200);
 
   while (analogRead(capteurLed ) >= plafondBas && g->stop == 0) {
-    stepper.moveRelativeInSteps(-2);
+    stepper.moveRelativeInSteps(1);
   }
 
 g->backwarding = 0;
@@ -119,13 +129,13 @@ void Moteur::imageArriere() {
   int i = 0;
   int j = 0;
   Serial.println("Une image Arriere");
-
+stepper.moveRelativeInSteps((g->pasMoteurIpI/18));
   int tour = 0;
   while (!((i == 1 && analogRead(capteurLed ) < plafondMid) ) && g->stop == 0) {
 
 
 
-    stepper.moveRelativeInSteps(-2);
+    stepper.moveRelativeInSteps(1);
     if (analogRead(capteurLed ) > plafondHaut && i == 0) {
       i = 1;
     }
@@ -137,7 +147,7 @@ void Moteur::imageArriere() {
 
 
 
-  delay(g->tempsPose);
+  
   a->affichage_tout();
   g->backwarding = 0;
 }
@@ -239,31 +249,24 @@ void Moteur::calibrage() {
 }
 
 void Moteur::configContinu() {
-  intToSwitch(g->pasMoteur * 2, 0);
-  intToSwitch(g->pasMoteur, 1);
+  intToSwitch(g->pasMoteur , 0);
+  intToSwitch(g->pasMoteur*2, 1);
   stepper.setAccelerationInStepsPerSecondPerSecond(g->acceleration);  //acceleration
   stepper.setSpeedInStepsPerSecond(g->stepMoteurParSec);
 
 }
 
 void Moteur::configIpI() {
-  intToSwitch(g->pasMoteurIpI * 2, 0);
-  intToSwitch(g->pasMoteurIpI, 1);
+  intToSwitch(g->pasMoteurIpI , 0);
+  intToSwitch(g->pasMoteurIpI*2, 1);
   stepper.setAccelerationInStepsPerSecondPerSecond(g->accelerationIpI);  //acceleration
   stepper.setSpeedInStepsPerSecond(g->stepMoteurParSecIpI);
 
 }
 
 void Moteur::configCallage() {
-  intToSwitch(g->pasMoteurCallage * 2, 0);
-  intToSwitch(g->pasMoteurCallage, 1);
+  intToSwitch(g->pasMoteurCallage , 0);
+  intToSwitch(g->pasMoteurCallage*2, 1);
   stepper.setAccelerationInStepsPerSecondPerSecond(g->accelerationCallage);  //acceleration
   stepper.setSpeedInStepsPerSecond(g->stepMoteurParSecCallage);
-}
-
-void Moteur::photos() {
-  if (!es->testContinu() && es->testCamera() ){
-      // FONCTION PRENDRE PHOTOS
-      delay(g->tempsPose);
-  }
 }

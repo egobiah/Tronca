@@ -146,7 +146,7 @@ int Menu::simpleMenu(int *a, String s) {
   if (g->stop == 1) {
     return 0;
   }
-  *a = tmpA;
+
   g->lcd1.clear();
   g->lcd1.print("Configuration fini");
   g->refresh = 1;
@@ -284,21 +284,14 @@ int Menu::affichage_menu() {
     int valRetour = 0;
     switch (g->posMenu) {
       // Reglage de plage de vitese en continu
+      
       case 0:
-        res = doubleMenu(&(g->vitesseContinuDebut), &(g->vitesseContinuFin), "Debut : ", "Fin : ");
-        break;
-
-      // Reglage de la plage image par image
-      case 1:
-        res = doubleMenu(&g->vitesseIpIDebut, &g->vitesseIpIFin, "Debut : ", "Fin : ");
-        break;
-      case 2:
         // Reglage temps de pose
         res = simpleMenu(&g->tempsPose, "Temps pose en ms");
 
         break;
       // Calibrage Led OPTO
-      case 3:
+      case 1:
         m->calibrage();
         g->menu = 0;
         g->subMenu = 0;
@@ -307,20 +300,20 @@ int Menu::affichage_menu() {
         break;
 
       // Reglage capteur
-      case 4:
+      case 2:
         res = doubleMenu(&g->ledMin, &g->ledMax, "Valeur Min", "Valeur Max");
         break;
 
       // Seuil
-      case 5:
+      case 3:
         res = simpleMenu(&g->seuil, "Seuil");
         break;
       // ¨Position Absolue
-      case 6:
+      case 4:
         res = longSimpleMenu(&g->posAbsolue, "Val Abs");
         break;
 
-      case 7:
+      case 5:
 
         // Reglage moteur continu
 
@@ -355,7 +348,7 @@ int Menu::affichage_menu() {
       default:
         // PEtit tricks pour depasse le maximum de 8 case d'un switch
         switch (g->posMenu) {
-          case 8:
+          case 6:
 
             // Reglage moteur continu
             // "Position Absolue", "Moteur Continu", "Moteur IpI", "Moteur callage"};
@@ -382,7 +375,7 @@ int Menu::affichage_menu() {
             res += valRetour;
             break;
 
-          case 9:
+          case 7:
             int valRetour = 0;
             // Reglage moteur callage
             // ¨Pas moteur

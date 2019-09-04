@@ -36,8 +36,8 @@ EntreeSortie::EntreeSortie(int tabInput[], int tailleTabInput, int tabLed[], int
 void EntreeSortie::tick(){
   refresh();
   detect_input();
-  mapPottar(p1,g->vitesseContinuDebut, g->vitesseContinuFin, &(g->vitesseContinu));
-  mapPottar(p2,g->vitesseIpIDebut, g->vitesseIpIFin, &(g->vitesseIpI));
+  //mapPottar(p1,g->vitesseContinuDebut, g->vitesseContinuFin, &(g->vitesseContinu));
+  //mapPottar(p2,g->vitesseIpIDebut, g->vitesseIpIFin, &(g->vitesseIpI));
   
 }
 
