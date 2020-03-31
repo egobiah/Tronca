@@ -153,7 +153,7 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
   //attachInterrupt(digitalPinToInterrupt(b7), interuptResetRelatif, RISING);
   
-  //attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
+  
   Serial.println("Ok, c'est parti");
   g.get_config();
   g.lcd_init();
@@ -165,6 +165,7 @@ void setup()
   Serial.println("Resultat calibrage");
   Serial.println(g.ledMin);
   Serial.println(g.ledMax);
+  attachInterrupt(digitalPinToInterrupt(B7), monMoteur.photos(), RISING);
 
 
 }
