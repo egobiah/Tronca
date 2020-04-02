@@ -145,6 +145,10 @@ void interuptInteruptOpto() {
   Serial.println("Detachage d'interupt");
 }
 
+void interuptPhotos(){
+  monMoteur.photos();
+  Serial.println("Prendre photos manuellement");
+}
 void setup()
 {
   Serial.begin(9600); // initialise connexion série à 9600 bauds
@@ -165,7 +169,8 @@ void setup()
   Serial.println("Resultat calibrage");
   Serial.println(g.ledMin);
   Serial.println(g.ledMax);
-  attachInterrupt(digitalPinToInterrupt(B7), monMoteur.photos(), RISING);
+  attachInterrupt(digitalPinToInterrupt(b7), interuptPhotos, RISING);
+
 
 
 }
