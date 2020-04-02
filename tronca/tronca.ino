@@ -116,7 +116,7 @@ void interuptResetRelatif(){
     noInterrupts();
     g.posRelatif = 0;
     Serial.println("Reset Relatif");
-    aff.affichage_tout();
+    aff.intToLed(g.posRelatif,aff.lc2);
     interrupts();
 }
 
@@ -147,7 +147,10 @@ void interuptInteruptOpto() {
   Serial.println("Detachage d'interupt");
 }
 
-
+void interuptPhotos(){
+  monMoteur.photos();
+  Serial.println("Prendre photos manuellement");
+}
 void setup()
 {
   Serial.begin(9600); // initialise connexion série à 9600 bauds
@@ -168,7 +171,7 @@ void setup()
   Serial.println("Resultat calibrage");
   Serial.println(g.ledMin);
   Serial.println(g.ledMax);
-  //attachInterrupt(digitalPinToInterrupt(b7), interuptPhotos, RISING);
+  attachInterrupt(digitalPinToInterrupt(b7), interuptPhotos, RISING);
 
 
 
@@ -178,7 +181,6 @@ void setup()
 
 void loop()
 {
-
   es.tick();
  if(es.touchInter(3)){
   aff.affichage_relatif();
@@ -223,11 +225,6 @@ void loop()
 
 void handling() {
   es.etteindreLed();
-  
-// Bouton photos appuyé
-  if(es.testBoutonPressed(13)){
-    monMoteur.photos();
-  }
   
   if ( es.testInter(2) ) {
     // B1
