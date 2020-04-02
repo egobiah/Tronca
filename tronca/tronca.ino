@@ -47,13 +47,15 @@ int b3 = 24;
 int b4 = 25;
 int b6 = 26;
 int b7 = 19;
+int b8 = 42;
+
 // Potar
 int p1 = A8;
 int p2 = A9;
 // Jack
 
 int led[12] = {i1T, i1B, i2T, i2B, i3T, i3B, i4T, i4B, i5T, i5B};
-int input[13] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur, b7};
+int input[14] = {i1, i2, i3, i4, i5, b1, b2, b3, b4, b5, b6, encodeur, b7, b8};
 //
 
 int moteur = 13;
@@ -88,7 +90,7 @@ Keypad k(0x20);
 Global g(0);
 
 #include "EntreeSortie.h"
-EntreeSortie es(input, 13, led, 12, &g); ;
+EntreeSortie es(input, 14, led, 12, &g); ;
 
 #include "Affichage.h"
 Affichage aff(&g, &es, &lc1, &lc2);
@@ -155,7 +157,7 @@ void setup()
   pinMode(opto, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
   attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
-  //attachInterrupt(digitalPinToInterrupt(b7), interuptResetRelatif, RISING);
+  attachInterrupt(digitalPinToInterrupt(b8), interuptResetRelatif, RISING);
   
   
   Serial.println("Ok, c'est parti");
