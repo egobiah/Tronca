@@ -129,9 +129,9 @@ void interuptOpto()
   Serial.println("Detect Opto");
 
   g.posAbsolue += es.dirrection();
-   if(g.posAbsolue < 0){
+   /*if(g.posAbsolue < 0){
       g.posAbsolue = 0;
-    }
+    }*/
   g.posRelatif += es.dirrection();
   aff.affichage_lc();
   attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
@@ -173,7 +173,7 @@ void setup()
   Serial.println(g.ledMin);
   Serial.println(g.ledMax);
  // attachInterrupt(digitalPinToInterrupt(b7), interuptPhotos, RISING);
-  attachInterrupt(digitalPinToInterrupt(b8), interuptResetRelatif, RISING);
+ // attachInterrupt(digitalPinToInterrupt(b8), interuptResetRelatif, RISING);
 
 
 
@@ -237,6 +237,12 @@ void handling() {
      
     }
 
+     if (es.testBoutonPressed(13) ) {
+        g.posRelatif = 0;
+        Serial.println("Reset du relatif");
+     }
+     
+   
     
   if ( es.testInter(2) ) {
     // B1
