@@ -116,7 +116,6 @@ void interuptResetRelatif(){
     noInterrupts();
     g.posRelatif = 0;
     Serial.println("Reset Relatif");
-    aff.intToLed(g.posRelatif,aff.lc2);
     interrupts();
 }
 
@@ -151,6 +150,8 @@ void interuptPhotos(){
   monMoteur.photos();
   Serial.println("Prendre photos manuellement");
 }
+
+
 void setup()
 {
   Serial.begin(9600); // initialise connexion série à 9600 bauds
@@ -172,6 +173,7 @@ void setup()
   Serial.println(g.ledMin);
   Serial.println(g.ledMax);
  // attachInterrupt(digitalPinToInterrupt(b7), interuptPhotos, RISING);
+  attachInterrupt(digitalPinToInterrupt(b8), interuptResetRelatif, RISING);
 
 
 
@@ -435,9 +437,6 @@ void handling() {
     }
   }
 
-   if (g.tamponK == -1 && g.codeK == '0' && g.ecritureClavier == 0 ) {
-    g.posRelatif = 0;
-  }
 
   
   es.gestionLed();
