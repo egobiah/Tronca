@@ -434,6 +434,12 @@ void handling() {
     delay(200);
     }
   }
+
+   if (g.tamponK == -1 && g.codeK == '0' && g.ecritureClavier == 0 ) {
+    g.posRelatif = 0;
+  }
+
+  
   es.gestionLed();
 
 
