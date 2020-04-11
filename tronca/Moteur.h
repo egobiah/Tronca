@@ -55,7 +55,7 @@ class Moteur {
     void configIpI();
 
     void configCallage();
-    void photos();
+    bool photos();
 
 
 };

@@ -171,7 +171,7 @@ void setup()
   Serial.println("Resultat calibrage");
   Serial.println(g.ledMin);
   Serial.println(g.ledMax);
-  attachInterrupt(digitalPinToInterrupt(b7), interuptPhotos, RISING);
+ // attachInterrupt(digitalPinToInterrupt(b7), interuptPhotos, RISING);
 
 
 
@@ -225,7 +225,17 @@ void loop()
 
 void handling() {
   es.etteindreLed();
-  
+  // Test PULSE
+
+   if (es.testBoutonPressed(12) ) {
+      // Bouton photos
+      if(monMoteur.photos()){
+        return;
+      }
+     
+    }
+
+    
   if ( es.testInter(2) ) {
     // B1
     if (es.testBoutonPressed(5) ) {

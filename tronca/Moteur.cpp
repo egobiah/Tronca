@@ -38,7 +38,7 @@ Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, i
   stepper.setAccelerationInStepsPerSecondPerSecond(800);   //acceleration
   stepper.setSpeedInStepsPerSecond(12800);
 }
-void Moteur::photos() {
+bool Moteur::photos() {
   if (!es->testContinu() && es->testCamera() && g->stop == 0 ){
       // FONCTION PRENDRE PHOTOS
       digitalWrite(camera,HIGH);
@@ -46,7 +46,9 @@ void Moteur::photos() {
       delay(g->tempsPose);
       digitalWrite(camera, LOW);
       delay(g->delayApresPose);
+      return true;
   }
+  return false;
 }
 
 void Moteur::pulseAvant() {
