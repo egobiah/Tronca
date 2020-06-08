@@ -59,7 +59,7 @@ class Global {
    int delayApresPose = 100;
 
   int stop = 0;
-
+  int arret = 0;
   
 
 

@@ -61,12 +61,6 @@ void Affichage::affichage_relatif(){
   g->lcd2.print(g->posRelatif);
   intToLed(g->posRelatif,lc2);
   
-  
-
-
-  
-
-  //affichage_vitesse();
  
   g->lcd2.setCursor(0,1);
   g->lcd2.print("Saisie ");
@@ -100,7 +94,9 @@ void Affichage::intToLed(long num, LedControl * lc){
     num = num/10;
     i++;
   }
- 
+  if(negatif){
+    lc->setChar(0,i,'-',0);
+  }
 
 }
 

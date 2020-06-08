@@ -10,7 +10,7 @@ int cs_led = 48;
 LedControl lc1 = LedControl(44, 52, 48, 2);
 
 LedControl lc2 = LedControl(9, 52, 8, 2);
-
+int currentInterupt = 0;
 
 
 
@@ -112,6 +112,11 @@ void interuptStop() {
   interrupts();
 }
 
+void interuptArret() {
+  Serial.println("Arret pressed interupt");
+  g.arret = 1;
+}
+
 void interuptResetRelatif(){
     noInterrupts();
     g.posRelatif = 0;
@@ -122,7 +127,7 @@ void interuptResetRelatif(){
 void interuptOpto()
 {
   detachInterrupt(digitalPinToInterrupt(opto));
-
+  
 
 
 
@@ -134,14 +139,14 @@ void interuptOpto()
     }*/
   g.posRelatif += es.dirrection();
   aff.affichage_lc();
+  currentInterupt = 1;
   attachInterrupt(digitalPinToInterrupt(opto2), interuptInteruptOpto, RISING);
-
-
 
 }
 
 void interuptInteruptOpto() {
   detachInterrupt(digitalPinToInterrupt(opto2));
+  currentInterupt = 0;
   attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
   Serial.println("Detachage d'interupt");
 }
@@ -156,7 +161,9 @@ void setup()
 {
   Serial.begin(9600); // initialise connexion série à 9600 bauds
   pinMode(opto, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
+  attachInterrupt(digitalPinToInterrupt(b5), interuptArret, RISING);
+  // BOUTON STOP A  DEFINIR
+  // attachInterrupt(digitalPinToInterrupt(b5), interuptStop, RISING);
   attachInterrupt(digitalPinToInterrupt(opto), interuptOpto, RISING);
   attachInterrupt(digitalPinToInterrupt(b8), interuptResetRelatif, RISING);
   
@@ -220,6 +227,10 @@ void loop()
     g.stop = 0;
     //delay(2000);
   }
+
+  if(g.arret != 0){
+    g.arret = 0;
+  }
 }
 
 
@@ -262,7 +273,7 @@ void handling() {
       while (es.testBoutonReleased(7) == 0 && g.stop == 0) {
         es.tick();
         monMoteur.pulseArriere();
-        Serial.println("Pulse Arriere");
+        Serial.println("Pulse One Arriere");
       }
     }
 
@@ -271,7 +282,7 @@ void handling() {
         es.tick();
         // PULSE AVANT
         monMoteur.pulseAvant();
-        Serial.println("Pulse AVANT");
+        Serial.println("Pulse One AVANT");
       }
     }
     // B6
@@ -311,7 +322,7 @@ void handling() {
     // B3
     if (es.testBoutonPressed(7) ) {
       while (es.testBoutonReleased(7) == 0 && g.stop == 0) {
-        // RECULE
+        // RECULE BOUTON BLEU
         es.tick();
         monMoteur.arriere();
         Serial.println("Recule");
@@ -326,7 +337,7 @@ void handling() {
     if (es.testBoutonPressed(8)) {
       while (es.testBoutonReleased(8) == 0 && g.stop == 0) {
         es.tick();
-        // AVANCE
+        // AVANCE BOUTON BLEU
         monMoteur.avant();
         Serial.println("Avance");
       }
@@ -349,18 +360,52 @@ void handling() {
         }
       }
 
+    // Bouton rouge direct
+      if(g.target == g.posRelatif){
+        if(es.testContinu()){
+        monMoteur.configContinu();
+        if(es.testAvant()){
+           monMoteur.stepper.setTargetPositionRelativeInSteps(-320000);
+          while(!g.arret && !monMoteur.stepper.processMovement());
+            ;
+          monMoteur.stepper.setTargetPositionToStop();
+          
+          while(!monMoteur.stepper.processMovement() && !g.stop)
+            ;   
+         monMoteur.imageAvant();
+            
+        } else {
+          g.backwarding = 1;
+           monMoteur.stepper.setTargetPositionRelativeInSteps(320000);
+          while(!g.arret && !monMoteur.stepper.processMovement());
+            ;
+          monMoteur.stepper.setTargetPositionToStop();
+          
+          while(!monMoteur.stepper.processMovement() && !g.stop)
+            ;   
+                      g.backwarding = 0;
+         monMoteur.imageArriere();
+          
+        }
+        
+        } else {
+          if(es.testAvant()){
+            while(!g.arret){
+              monMoteur.imageAvant();
+            }
+          } else {
+              
+        while(!g.arret){
+              monMoteur.imageArriere();
+            }
+          }
+        }
+       
+      } else {
     
-    if(g.target == g.posRelatif){
-      g.target = 30000;
-      Serial.println("ZERO");
-      if(!es.testAvant()){
-        g.target = -g.target;
-      }
-    }
-    
-   Serial.println("Target");
+     Serial.println("Target");
       Serial.println(g.target);
-      while ( ( (g.posRelatif - g.target != 0)  )  && g.stop == 0) {
+      while ( ( abs(g.posRelatif - g.target ) > 2   )  && g.stop == 0) {
         Serial.println(g.posRelatif - g.target );
         if (es.testContinu()) {
           // En continu
@@ -369,13 +414,14 @@ void handling() {
             monMoteur.configContinu();
           
             monMoteur.stepper.moveRelativeInSteps( (g.posRelatif - g.target - 1) * g.pasMoteur / 16 );
-            monMoteur.avant();
+           // monMoteur.avant();
           } else {
             monMoteur.configContinu();
             g.backwarding = 1;
             monMoteur.stepper.moveRelativeInSteps( (g.posRelatif - (g.target) - 1) * g.pasMoteur / 16 );
+         //   monMoteur.arriere();
             g.backwarding = 0;
-            monMoteur.arriere();
+            
           }
         } else {
           // En image par image
@@ -386,14 +432,23 @@ void handling() {
           }
         }
       }
+
+      while ( ( (g.posRelatif - g.target != 0)  )  && g.stop == 0) {
+        if (g.posRelatif - g.target < 0) {
+            monMoteur.imageAvant();
+          } else {
+            monMoteur.imageArriere();
+          }
+      }
       g.targetRelatif = 0;
       g.targetAbsolue = 0;
 
       // GO TO ABSOLUE TARGET
 
-    aff.affichage_tout();
-
+      aff.affichage_tout();
+      }
     }
+    
   }
 
 
