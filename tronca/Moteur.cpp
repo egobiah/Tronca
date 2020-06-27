@@ -39,7 +39,7 @@ Moteur::Moteur(Global * g1, Affichage * a1, EntreeSortie * es1, int pinMoteur, i
   stepper.setSpeedInStepsPerSecond(12800);
 }
 bool Moteur::photos() {
-  if (!es->testContinu() && es->testCamera() && g->stop == 0 ){
+  if (!es->testContinu() && es->testCamera() && g->stop == 0&& g->arret == 0 ){
       // FONCTION PRENDRE PHOTOS
       digitalWrite(camera,HIGH);
       Serial.println("photos");
@@ -226,7 +226,7 @@ void Moteur::calibrage() {
   int max = 0;
 
   configCallage();
-  for (int i = 0; i < 12800 && g->stop == 0; i++) {
+  for (int i = 0; i < 12800 && g->stop == 0 && g->arret == 0; i++) {
     int lecture = analogRead(capteurLed );
     if (lecture < min) {
 

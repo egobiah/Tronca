@@ -270,7 +270,7 @@ void handling() {
     }
     // B3
     if (es.testBoutonPressed(7) ) {
-      while (es.testBoutonReleased(7) == 0 && g.stop == 0) {
+      while (es.testBoutonReleased(7) == 0 && g.stop == 0 && g.arret == 0) {
         es.tick();
         monMoteur.pulseArriere();
         Serial.println("Pulse One Arriere");
@@ -278,7 +278,7 @@ void handling() {
     }
 
     if (es.testBoutonPressed(8)) {
-      while (es.testBoutonReleased(8) == 0 && g.stop == 0) {
+      while (es.testBoutonReleased(8) == 0 && g.stop == 0 && g.arret == 0) {
         es.tick();
         // PULSE AVANT
         monMoteur.pulseAvant();
@@ -405,7 +405,7 @@ void handling() {
     
      Serial.println("Target");
       Serial.println(g.target);
-      while ( ( abs(g.posRelatif - g.target ) > 2   )  && g.stop == 0) {
+      while ( ( abs(g.posRelatif - g.target ) > 2   )  && g.stop == 0 && g.arret == 0) {
         Serial.println(g.posRelatif - g.target );
         if (es.testContinu()) {
           // En continu
@@ -433,7 +433,7 @@ void handling() {
         }
       }
 
-      while ( ( (g.posRelatif - g.target != 0)  )  && g.stop == 0) {
+      while ( ( (g.posRelatif - g.target != 0)  )  && g.stop == 0 && g.arret == 0) {
         if (g.posRelatif - g.target < 0) {
             monMoteur.imageAvant();
           } else {
